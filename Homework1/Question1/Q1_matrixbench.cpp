@@ -72,7 +72,7 @@ int main()
     cout << "Execution time for sparse matrix multiplication of dimension " << DIM
     << ": "<< run_time << " nanoseconds." << endl;
 
-    /*
+    /* code to test correctness of the matrix multiplication
     cout << endl;
     cout << "Mat1:" << endl;
     for (int i = 0; i < DIM; i++)
