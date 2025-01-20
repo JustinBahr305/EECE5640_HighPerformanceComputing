@@ -1,4 +1,4 @@
-all: Q1_floatbench Q1_matrixbench
+all: Q1_floatbench Q1_matrixbench Q1_intbench
 
 Q1_floatbench: Q1_floatbench.cpp
 	g++ -Wall -g -o Q1_floatbench Q1_floatbench.cpp
