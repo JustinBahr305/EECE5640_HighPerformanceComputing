@@ -17,7 +17,7 @@ int main()
     // creates input vectors a & b, and output vector c
     float a[SIZE] = {0};
     float b[SIZE] = {0};
-    float c[SIZE] = {0};
+    float c[SIZE];
 
     // seeds the random geenrator
     srand(time(0));
