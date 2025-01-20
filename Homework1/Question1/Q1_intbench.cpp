@@ -11,17 +11,13 @@ using namespace std;
 int main()
 {
     // defines the vector size
-    const int SIZE = 100;
+    const int SIZE = 100000;
 
     // creates input vectors a, b, c, and d
     int a[SIZE];
     int b[SIZE];
     int c[SIZE];
     int d[SIZE];
-    int e[SIZE];
-
-    // creates temporary int
-    int temp;
 
     // seeds the random generator
     srand(time(0));
@@ -42,7 +38,9 @@ int main()
 
     for (int i = 0; i < SIZE; i++)
     {
-        e[i] = a[i] * b[i] / c[i] - d[i];
+        a[i] *= b[i];
+        a[i] += c[i];
+        a[i] -= d[i];
     }
 
     // stops the clock
