@@ -15,16 +15,12 @@ int main()
     const int SIZE = 100000;
 
     // creates input vectors a & b, and output vector c
-    float a[SIZE] = {0};
-    float b[SIZE] = {0};
+    float a[SIZE];
+    float b[SIZE];
     float c[SIZE];
 
-    // seeds the random geenrator
+    // seeds the random generator
     srand(time(0));
-
-    // auto start_time;
-    // auto end_time;
-    // auto run_time;
 
     // fills vectors a & b with random floats
     for (int i = 0; i < SIZE; i++)
@@ -47,6 +43,7 @@ int main()
     // stops the clock
     auto end_time = clock::now();
 
+    // casts run_time in nanoseconds
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
     // outputs the execution time
