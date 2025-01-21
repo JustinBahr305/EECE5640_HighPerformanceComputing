@@ -19,4 +19,4 @@ Q1_intO2: Q1_intbench.cpp
 	g++ -Wall -g -O2 -o Q1_intO2 Q1_intbench.cpp
 
 clean:
-	rm Q1_floatbench Q1_matrixbench Q1_intbench
+	rm Q1_floatbench Q1_floatO2 Q1_matrixbench Q1_matrixO2 Q1_intbench Q1_intO2
