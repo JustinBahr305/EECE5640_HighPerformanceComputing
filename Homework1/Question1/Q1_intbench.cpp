@@ -10,10 +10,10 @@ using namespace std;
 
 int main()
 {
-    // defines the vector size
+    // defines the array size
     const int SIZE = 100000;
 
-    // creates input vectors a, b, c, and d
+    // creates input arrays a, b, c, and d
     int a[SIZE];
     int b[SIZE];
     int c[SIZE];
@@ -22,6 +22,7 @@ int main()
     // seeds the random generator
     srand(time(0));
 
+    // fills arrays a, b, c, and d with random integers 0 to 99
     for (int i = 0; i < SIZE; i++)
     {
         a[i] = rand() % 100;

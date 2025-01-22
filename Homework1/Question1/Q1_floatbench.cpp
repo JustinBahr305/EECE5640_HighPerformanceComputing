@@ -11,10 +11,10 @@ using namespace std;
 
 int main()
 {
-    // defines the vector size
+    // defines the array size
     const int SIZE = 100000;
 
-    // creates input vectors a & b, and output vector c
+    // creates input arrays a & b, and output array c
     float a[SIZE];
     float b[SIZE];
     float c[SIZE];
@@ -22,7 +22,7 @@ int main()
     // seeds the random generator
     srand(time(0));
 
-    // fills vectors a & b with random floats
+    // fills arrays a & b with random floats
     for (int i = 0; i < SIZE; i++)
     {
         a[i] = (float)(rand()) / (float)(rand());
