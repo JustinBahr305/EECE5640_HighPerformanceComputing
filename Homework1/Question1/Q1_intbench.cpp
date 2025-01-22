@@ -1,5 +1,5 @@
 // Q1_intbench
-// Created by justb on 1/20/2025.
+// Created by Justin Bahr on 1/20/2025.
 // Benchmark for integer computations
 
 #include <iostream>
@@ -38,9 +38,7 @@ int main()
 
     for (int i = 0; i < SIZE; i++)
     {
-        a[i] *= b[i];
-        a[i] += c[i];
-        a[i] -= d[i];
+        a[i] = a[i] * b[i] + c[i] - d[i];
     }
 
     // stops the clock

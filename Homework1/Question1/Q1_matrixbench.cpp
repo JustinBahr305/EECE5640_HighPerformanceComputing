@@ -1,5 +1,5 @@
 // Q1_matrixbench
-// Created by justb on 1/20/2025.
+// Created by Justin Bahr on 1/20/2025.
 // Benchmark for spare matrix multiplication
 
 #include <iostream>
