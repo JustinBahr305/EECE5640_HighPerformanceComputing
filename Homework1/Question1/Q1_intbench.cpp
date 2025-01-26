@@ -38,6 +38,7 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
+    // executes integer operations
     for (int i = 0; i < SIZE; i++)
     {
         a[i] = a[i] * b[i] + c[i] - d[i];
@@ -46,13 +47,25 @@ int main()
     // stops the clock
     auto end_time = clock::now();
 
-    for (int i = 0; i < SIZE; i++)
-    {
-        cout << a[i] << endl;
-    }
-
     // casts run_time in nanoseconds
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+
+    // creates a boolean
+    bool isDone = true;
+
+    // loops through every element in array a
+    // if array a is never used after the operations, optimizations may delete "redundant" code
+    for (int i = 0; i < SIZE; i++)
+    {
+        if (a[i] >= 10000) { isDone = false; }
+    }
+
+    // print success message
+    if (isDone)
+    {
+        cout << "Success" << endl;
+    }
+
 
     // outputs the execution time
     cout << "Execution time for " << 3*SIZE << " integer operations: " << run_time << " nanoseconds." << endl;

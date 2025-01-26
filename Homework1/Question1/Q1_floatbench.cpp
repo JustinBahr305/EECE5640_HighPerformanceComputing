@@ -35,6 +35,7 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
+    // executes floating point multiplications
     for (int i = 0; i < SIZE; i++)
     {
         c[i] = a[i] * b[i];
