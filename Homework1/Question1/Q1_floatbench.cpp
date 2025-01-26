@@ -6,6 +6,7 @@
 #include <iostream>
 #include <chrono>
 #include <ctime>
+#include <cmath>
 
 using namespace std;
 
@@ -46,6 +47,25 @@ int main()
 
     // casts run_time in nanoseconds
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+
+    // creates a boolean for success terms
+    bool isDone = true;
+
+    // loops through every element in array c
+    // if array c is never used after the operations, optimizations may delete "redundant" code
+    for (int i = 0; i < SIZE; i++)
+    {
+        if (isnan(c[i]))
+        {
+            isDone = false;
+        }
+    }
+
+    // print success message
+    if (isDone)
+    {
+        cout << "Success" << endl;
+    }
 
     // outputs the execution time
     cout << "Execution time for " << SIZE << " float multiplications: " << run_time << " nanoseconds." << endl;

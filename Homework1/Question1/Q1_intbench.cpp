@@ -50,14 +50,17 @@ int main()
     // casts run_time in nanoseconds
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
-    // creates a boolean
+    // creates a boolean for success terms
     bool isDone = true;
 
     // loops through every element in array a
     // if array a is never used after the operations, optimizations may delete "redundant" code
     for (int i = 0; i < SIZE; i++)
     {
-        if (a[i] >= 10000) { isDone = false; }
+        if (a[i] >= 10000)
+        {
+            isDone = false;
+        }
     }
 
     // print success message
@@ -65,7 +68,6 @@ int main()
     {
         cout << "Success" << endl;
     }
-
 
     // outputs the execution time
     cout << "Execution time for " << 3*SIZE << " integer operations: " << run_time << " nanoseconds." << endl;
