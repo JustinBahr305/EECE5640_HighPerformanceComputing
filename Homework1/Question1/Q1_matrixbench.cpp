@@ -1,5 +1,6 @@
 // Q1_matrixbench
 // Created by Justin Bahr on 1/20/2025.
+// EECE 5640 - High Performance Computing
 // Benchmark for spare matrix multiplication
 
 #include <iostream>

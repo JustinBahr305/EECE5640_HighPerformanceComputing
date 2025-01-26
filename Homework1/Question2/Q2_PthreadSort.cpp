@@ -1,5 +1,6 @@
 // Q2_PthreadSort
 // Created by Justin Bahr on 1/21/2025.
+// EECE 5640 - High Performance Computing
 // Sorting 10,000 Integers using Pthreads
 
 #include <iostream>
