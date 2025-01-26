@@ -46,6 +46,11 @@ int main()
     // stops the clock
     auto end_time = clock::now();
 
+    for (int i = 0; i < SIZE; i++)
+    {
+        cout << a[i] << endl;
+    }
+
     // casts run_time in nanoseconds
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
