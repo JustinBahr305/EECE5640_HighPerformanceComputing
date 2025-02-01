@@ -33,19 +33,23 @@ double piByDarts(int numThreads, int numDarts)
 
     // creates a variable to accumulate the number of darts thrown inside the circle
     int sumInCircle = 0;
+    int localSum = 0;
 
     // creates a parallel process with numThreads threads
-    #pragma omp parallel num_threads(numThreads) reduction(+:sumInCircle)
+    #pragma omp parallel num_threads(numThreads)
     {
+        #pragma omp for
         for (int i = 0; i < numDarts; i++)
         {
             x = rand() % (2*DIM+1) - DIM;
             y = rand() % (2*DIM+1) - DIM;
             if (inCircle(x, y))
             {
-                sumInCircle += 1;
+                localSum += 1;
             }
         }
+        #pragma omp critical
+        sumInCircle += localSum;
     }
     return 4*(double)sumInCircle/(double)numDarts;
 }
