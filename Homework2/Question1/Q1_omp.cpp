@@ -35,9 +35,9 @@ double piByDarts(int numThreads, int numDarts)
     int sumInCircle = 0;
 
     // creates a parallel process with numThreads threads
-    #pragma omp parallel num_threads(numThreads) for reduction(+:sumInCircle)
+    #pragma omp parallel num_threads(numThreads)
     {
-        #pragma omp for
+        #pragma omp for reduction(+:sumInCircle)
         for (int i = 0; i < numDarts; i++)
         {
             x = rand() % (2*DIM+1) - DIM;
