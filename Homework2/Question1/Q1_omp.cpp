@@ -14,11 +14,40 @@ using namespace std;
 // defines the dimensions of the dartboard
 // x coordinates from -DIM to +DIM
 // y coordinates from -DIM to +DIM
-const int DIM = 10000;
+const int DIM = 500;
 
-double pi_by_darts(int numThreads, int numDarts)
+bool inCircle(int x, int y)
 {
+    if (x*x + y*y <= DIM*DIM)
+        return true;
+    else
+        return false;
+}
 
+// function to estimate pi by throwing darts
+double piByDarts(int numThreads, int numDarts)
+{
+    //creates arrays for the x and y values of dart throws
+    int x;
+    int y;
+
+    // creates a variable to accumulate the number of darts thrown inside the circle
+    int sumInCircle = 0;
+
+    // creates a parallel process with numThreads threads
+    #pragma omp parallel num_threads(numThreads) reduction(+:sumInCircle)
+    {
+        for (int i = 0; i < numDarts; i++)
+        {
+            x = rand() % (2*DIM+1) - DIM;
+            y = rand() % (2*DIM+1) - DIM;
+            if (inCircle(x, y))
+            {
+                sumInCircle += 1;
+            }
+        }
+    }
+    return 4*(double)sumInCircle/(double)numDarts;
 }
 
 int main()
@@ -47,7 +76,7 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
-    calc_pi = pi_by_darts(numThreads, numDarts);
+    calc_pi = piByDarts(numThreads, numDarts);
 
     // stops the clock
     auto end_time = clock::now();
@@ -56,8 +85,9 @@ int main()
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
     // prints the calculated value of pi and the runtime
-    cout << "Calculated value of pi: " << calc_pi << endl;
     cout << "Time to execute: " << run_time << " ns" << endl;
+    cout << "Calculated value of pi: " << calc_pi << endl;
+    cout << "Absolute error: " << abs(calc_pi - M_PI) << endl;
 
     return 0;
 }
