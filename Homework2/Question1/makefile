@@ -1,7 +1,7 @@
 all: Q1_omp
 
 Q1_omp:
-	g++ -o Q1_omp Q1_omp.cpp -fopenmp
+	g++ -fopenmp -o Q1_omp Q1_omp.cpp
 
 clean:
 	rm Q1_omp
