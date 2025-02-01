@@ -36,7 +36,7 @@ double piByDarts(int numThreads, int numDarts)
     int localSum = 0;
 
     // creates a parallel process with numThreads threads
-    #pragma omp parallel for num_threads(numThreads)
+    #pragma omp parallel for num_threads(numThreads) reduction(+:sumInCircle)
     {
         for (int i = 0; i < numDarts; i++)
         {
@@ -47,7 +47,6 @@ double piByDarts(int numThreads, int numDarts)
                 localSum += 1;
             }
         }
-        #pragma omp atomic
         sumInCircle += localSum;
     }
     return 4*(double)sumInCircle/(double)numDarts;
