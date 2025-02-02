@@ -5,8 +5,7 @@
 
 #include <iostream>
 #include <chrono>
-#include <ctime>
-#include <cmath>
+#include <random>
 #include <omp.h>
 
 using namespace std;
@@ -18,10 +17,7 @@ const int DIM = 500;
 
 bool inCircle(int x, int y)
 {
-    if (x*x + y*y <= DIM*DIM)
-        return true;
-    else
-        return false;
+    return (x * x + y * y <= DIM * DIM);
 }
 
 // function to estimate pi by throwing darts
@@ -34,20 +30,37 @@ double piByDarts(int numThreads, int numDarts)
     // creates a variable to accumulate the number of darts thrown inside the circle
     int sumInCircle = 0;
 
-    // creates a parallel process with numThreads threads
-    #pragma omp parallel num_threads(numThreads) reduction(+:sumInCircle)
+    // creates a parallel process for each thread to execute
+    #pragma omp parallel num_threads(numThreads)
     {
+        // each thread given a unique random number generator
+        random_device randD;
+
+        // seeds randDom distribution based on the thread number
+        mt19937 gen(randD() ^ omp_get_thread_num());
+        uniform_int_distribution<int> dist(-DIM, DIM);
+
+        // creates a local sum variable privately owned by an individual thread
+        int localSum = 0;
+
+        #pragma omp for nowait
         for (int i = 0; i < numDarts; i++)
         {
-            x = rand() % (2*DIM+1) - DIM;
-            y = rand() % (2*DIM+1) - DIM;
-            if (inCircle(x, y))
+            int x = dist(gen);
+            int y = dist(gen);
+            if (inCircle(x,y))
             {
-                sumInCircle += 1;
+                localSum++;
             }
         }
+
+        // atomic call to add the local sums to the total process sum
+        #pragma omp atomic
+        sumInCircle += localSum;
     }
-    return 4*(double)sumInCircle/(double)numDarts;
+
+    // returns the estimated value of pi
+    return 4.0 * sumInCircle / numDarts;
 }
 
 int main()
