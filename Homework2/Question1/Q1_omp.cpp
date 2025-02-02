@@ -7,6 +7,7 @@
 #include <chrono>
 #include <random>
 #include <omp.h>
+#include <math.h>
 
 using namespace std;
 
@@ -43,6 +44,7 @@ double piByDarts(int numThreads, int numDarts)
         // creates a local sum variable privately owned by an individual thread
         int localSum = 0;
 
+        // parallelizes the loop throwing darts using nowait since throws are independent
         #pragma omp for nowait
         for (int i = 0; i < numDarts; i++)
         {
@@ -65,9 +67,6 @@ double piByDarts(int numThreads, int numDarts)
 
 int main()
 {
-    // seeds the random generator
-    srand(time(0));
-
     // creates variables for the numbers of threads and darts
     int numThreads;
     int numDarts;
