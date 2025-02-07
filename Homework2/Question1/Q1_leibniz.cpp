@@ -5,8 +5,8 @@
 
 #include <iostream>
 #include <chrono>
-#include <omp.h>
 #include <math.h>
+#include <omp.h>
 
 using namespace std;
 
@@ -33,6 +33,7 @@ double piByLeibniz(int numTerms, int numThreads)
             piSum += localSum;
     } // end parallel section
 
+    // returns the estimated value of pi
     return 4*piSum;
 }
 
