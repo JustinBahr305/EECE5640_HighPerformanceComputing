@@ -37,7 +37,7 @@ void* threadDart(void* numDartsArg)
     int numDarts = numDartsStruct->numThreads;
     int threadNum = numDartsStruct->threadNum;
 
-    //creates arrays for the x and y values of dart throws
+    //creates variables for the x and y values of dart throws
     int x;
     int y;
 
@@ -50,8 +50,8 @@ void* threadDart(void* numDartsArg)
 
     for (int i = 0; i < numDarts; i++)
     {
-        int x = dist(gen);
-        int y = dist(gen);
+        x = dist(gen);
+        y = dist(gen);
         if (inCircle(x,y))
         {
             localSums[threadNum]++;

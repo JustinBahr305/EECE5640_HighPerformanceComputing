@@ -6,21 +6,35 @@
 #include <iostream>
 #include <chrono>
 #include <math.h>
+#include <omp.h>
 
 using namespace std;
 
-double piByLeibniz(int numTerms)
+double piByLeibniz(int numTerms, int numThreads)
 {
+    // creates a variable to store the total sum
     double piSum = 0;
 
-    for (int i = 0; i < numTerms; i = i+2)
-    {
-        piSum += (double)1/(2*i+1);
-    }
+    // creates a variable to store the local sums
+    double localSum = 0;
 
-    for (int i = 1; i < numTerms; i = i + 2)
+    #pragma omp parallel num_threads(numThreads) private(localSum)
     {
-        piSum -= (double)1/(2*i+1);
+        #pragma omp for nowait
+        for (int i = 0; i < numTerms; i = i+2)
+        {
+            localSum += (double)1/(2*i+1);
+        }
+
+        #pragma omp for nowait
+        for (int i = 1; i < numTerms; i = i + 2)
+        {
+            localSum -= (double)1/(2*i+1);
+        }
+
+        // atomic call to add the local sums to the total process sum
+        #pragma omp atomic
+        piSum += localSum;
     }
 
     return 4*piSum;
@@ -28,11 +42,16 @@ double piByLeibniz(int numTerms)
 
 int main()
 {
-    // creates a variable for the number of terms
+    // creates a variable for the number of terms and threads
     int numTerms;
+    int numThreads;
 
     // creates the placeholder for the calculated value of pi
     double calc_pi;
+
+    // allows the user to choose the number of threads
+    cout << "How many threads would you like to use?" << endl;
+    cin >> numThreads;
 
     // allows the user to choose the number of darts
     cout << "How many terms would you like to add?" << endl;
@@ -44,7 +63,7 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
-    calc_pi = piByLeibniz(numTerms);
+    calc_pi = piByLeibniz(numTerms, numThreads);
 
     // stops the clock
     auto end_time = clock::now();

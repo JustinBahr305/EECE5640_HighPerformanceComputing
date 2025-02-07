@@ -24,15 +24,18 @@ bool inCircle(int x, int y)
 // function to estimate pi by throwing darts
 double piByDarts(int numThreads, int numDarts)
 {
-    //creates arrays for the x and y values of dart throws
+    //creates variables for the x and y values of dart throws
     int x;
     int y;
 
     // creates a variable to accumulate the number of darts thrown inside the circle
     int sumInCircle = 0;
 
+    // creates a local sum variable privately owned by an individual thread
+    int localSum = 0;
+
     // creates a parallel process for each thread to execute
-    #pragma omp parallel num_threads(numThreads)
+    #pragma omp parallel num_threads(numThreads) private(x,y,localSum)
     {
         // each thread given a unique random number generator
         random_device randD;
@@ -41,15 +44,12 @@ double piByDarts(int numThreads, int numDarts)
         mt19937 gen(randD() ^ omp_get_thread_num());
         uniform_int_distribution<int> dist(-DIM, DIM);
 
-        // creates a local sum variable privately owned by an individual thread
-        int localSum = 0;
-
         // parallelizes the loop throwing darts using nowait since throws are independent
         #pragma omp for nowait
         for (int i = 0; i < numDarts; i++)
         {
-            int x = dist(gen);
-            int y = dist(gen);
+            x = dist(gen);
+            y = dist(gen);
             if (inCircle(x,y))
             {
                 localSum++;
