@@ -21,7 +21,7 @@ double piByLeibniz(int numTerms, int numThreads)
     // creates a parallel process for each thread to execute
     #pragma omp parallel num_threads(numThreads) private(localSum)
     {
-        #pragma omp for
+        #pragma omp for nowait
         for (int i = 0; i < numTerms; i++)
         {
             localSum += (i % 2 == 0 ? 1.0 : -1.0)/(2*i+1);

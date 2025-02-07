@@ -44,6 +44,8 @@ double piByDarts(int numThreads, int numDarts)
         mt19937 gen(randD() ^ omp_get_thread_num());
         uniform_int_distribution<int> dist(-DIM, DIM);
 
+        cout << "Thread " << omp_get_thread_num() << endl;
+
         // parallelizes the loop throwing darts using nowait since throws are independent
         #pragma omp for nowait
         for (int i = 0; i < numDarts; i++)
