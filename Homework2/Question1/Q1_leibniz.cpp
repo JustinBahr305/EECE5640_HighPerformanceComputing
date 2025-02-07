@@ -21,8 +21,6 @@ double piByLeibniz(int numTerms, int numThreads)
     // creates a parallel process for each thread to execute
     #pragma omp parallel num_threads(numThreads) private(localSum)
     {
-        cout << "Thread " << omp_get_thread_num() << endl;
-
         #pragma omp for nowait
         for (int i = 0; i < numTerms; i++)
         {
