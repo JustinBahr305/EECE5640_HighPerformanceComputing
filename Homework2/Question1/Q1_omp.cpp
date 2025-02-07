@@ -58,8 +58,8 @@ double piByDarts(int numThreads, int numDarts)
 
         // atomic call to add the local sums to the total process sum
         #pragma omp atomic
-        sumInCircle += localSum;
-    }
+            sumInCircle += localSum;
+    } // end parallel section
 
     // returns the estimated value of pi
     return 4.0 * sumInCircle / numDarts;

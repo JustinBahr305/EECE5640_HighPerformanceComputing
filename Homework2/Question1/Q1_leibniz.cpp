@@ -20,6 +20,7 @@ double piByLeibniz(int numTerms, int numThreads)
 
     #pragma omp parallel num_threads(numThreads) private(localSum)
     {
+        cout << "Thread num: " << omp_get_thread_num() << endl;
         #pragma omp for nowait
         for (int i = 0; i < numTerms; i = i+2)
         {
@@ -34,8 +35,8 @@ double piByLeibniz(int numTerms, int numThreads)
 
         // atomic call to add the local sums to the total process sum
         #pragma omp atomic
-        piSum += localSum;
-    }
+            piSum += localSum;
+    } // end parallel section
 
     return 4*piSum;
 }
