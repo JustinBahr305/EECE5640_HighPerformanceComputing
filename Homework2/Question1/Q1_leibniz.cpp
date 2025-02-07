@@ -1,35 +1,30 @@
 // Q1_leibniz
 // Created by Justin Bahr on 1/31/2025.
 // EECE 5640 - High Performance Computing
-// Leibniz Estimation for pi using
+// Leibniz Estimation for pi using OpenMP
 
 #include <iostream>
 #include <chrono>
-#include <math.h>
 #include <omp.h>
+#include <math.h>
 
 using namespace std;
 
 double piByLeibniz(int numTerms, int numThreads)
 {
     // creates a variable to store the total sum
-    double piSum = 0;
+    double piSum = 0.0;
 
     // creates a variable to store the local sums
-    double localSum = 0;
+    double localSum = 0.0;
 
+    // creates a parallel process for each thread to execute
     #pragma omp parallel num_threads(numThreads) private(localSum)
     {
         #pragma omp for nowait
-        for (int i = 0; i < numTerms; i = i+2)
+        for (int i = 0; i < numTerms; i++)
         {
-            localSum += (double)1/(2*i+1);
-        }
-
-        #pragma omp for nowait
-        for (int i = 1; i < numTerms; i = i+2)
-        {
-            localSum -= (double)1/(2*i+1);
+            localSum += (i % 2 == 0 ? 1.0 : -1.0)/(2*i+1);
         }
 
         // atomic call to add the local sums to the total process sum
