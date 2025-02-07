@@ -24,11 +24,10 @@ double piByLeibniz(int numTerms, int numThreads)
         for (int i = 0; i < numTerms; i = i+2)
         {
             localSum += (double)1/(2*i+1);
-            cout << "Thread num: " << omp_get_thread_num() << endl;
         }
 
         #pragma omp for nowait
-        for (int i = 1; i < numTerms; i = i + 2)
+        for (int i = 1; i < numTerms; i = i+2)
         {
             localSum -= (double)1/(2*i+1);
         }
