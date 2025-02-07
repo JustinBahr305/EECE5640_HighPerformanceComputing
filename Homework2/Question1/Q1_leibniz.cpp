@@ -1,5 +1,5 @@
 // Q1_leibniz
-// Created by justb on 1/31/2025.
+// Created by Justin Bahr on 1/31/2025.
 // EECE 5640 - High Performance Computing
 // Leibniz Estimation for pi using
 

@@ -1,12 +1,12 @@
 // Q1_omp
-// Created by Justin Bahr on 1/31/2025.
+// Created by Justin Bahr on 2/4/2025.
 // EECE 5640 - High Performance Computing
-// Monte Carlo Estimation for pi using Pthreads
+// Monte Carlo Estimation for pi using OpenMP
 
 #include <iostream>
 #include <chrono>
 #include <random>
-#include <omp.h>
+#include <pthread.h>
 #include <math.h>
 
 using namespace std;
