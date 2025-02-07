@@ -10,4 +10,4 @@ Q1_pthread:
 	g++ -lpthread -o Q1_pthread Q1_pthread.cpp
 
 clean:
-	rm Q1_omp
+	rm Q1_omp Q1_leibniz Q1_pthread
