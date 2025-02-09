@@ -13,7 +13,7 @@
 using namespace std;
 
 // creates global variables for the number of philosophers and iterations
-int numPhilosophers = 0;
+int numPhilosophers;
 int numIterations;
 
 // creates a global variable for the current iteration
@@ -157,11 +157,10 @@ int main()
     // seeds the random generator
     srand(time(0));
 
-    while (numPhilosophers % 2 == 0 || numPhilosophers < 0)
-    {
+    do {
         cout << "Please enter an odd number of philosophers: " << endl;
         cin >> numPhilosophers;
-    }
+    } while (numPhilosophers % 2 == 0 || numPhilosophers < 0);
 
     cout << "Please enter the number of iterations: " << endl;
     cin >> numIterations;

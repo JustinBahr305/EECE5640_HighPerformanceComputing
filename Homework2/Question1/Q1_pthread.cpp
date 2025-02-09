@@ -119,8 +119,10 @@ int main()
     double calc_pi;
 
     // allows the user to choose the number of threads
-    cout << "How many threads would you like to use?" << endl;
-    cin >> numThreads;
+    do {
+        cout << "How many threads would you like to use?" << endl;
+        cin >> numThreads;
+    } while (numThreads < 1);
 
     // allows the user to choose the number of darts
     cout << "How many darts would you like to throw?" << endl;

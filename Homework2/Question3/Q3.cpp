@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <ctime>
 #include <omp.h>
 #include "Graph.h"
 
@@ -12,6 +13,26 @@ using namespace std;
 
 int main()
 {
+    int numThreads;
+    int numVertices;
+
+    // allows the user to choose the number of threads
+    do {
+        cout << "How many threads would you like to use?" << endl;
+        cin >> numThreads;
+    } while (numThreads < 1);
+
+    // allows the user to choose the number of vertices on the graph
+    do {
+        cout << "How many vertices would you like on this graph?" << endl;
+        cin >> numVertices;
+    } while (numVertices < 1);
+
+    // creates a graph with the specified number of vertices
+    Graph graph(numVertices);
+
+    graph.printGraph();
+
     // initialize the high resolution clock
     typedef chrono::high_resolution_clock clock;;
 
@@ -19,6 +40,7 @@ int main()
     auto start_time = clock::now();
 
     // main code
+
 
     // stops the clock
     auto end_time = clock::now();
