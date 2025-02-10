@@ -25,10 +25,14 @@ class Graph
         // function to add an edge
         void addEdge(int x, int y);
 
-        // function to add an edge
+        // function to remove an edge
         void removeEdge(int x, int y);
 
+        // function to detect an edge
         bool isEdge(int x, int y);
+
+        // function to return the number of vertices
+        int getSize();
 };
 
 #endif //GRAPH_H

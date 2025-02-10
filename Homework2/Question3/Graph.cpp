@@ -48,6 +48,7 @@ void Graph::printGraph()
     }
 }
 
+// function to add an edge
 void Graph::addEdge(int x, int y)
 {
     if (x >= 0 && y >= 0 && x < V && y >= V)
@@ -59,6 +60,7 @@ void Graph::addEdge(int x, int y)
         cout << "Not a valid edge - out of bounds" << endl;
 }
 
+// function to remove an edge
 void Graph::removeEdge(int x, int y)
 {
     if (x >= 0 && y >= 0 && x < V && y >= V)
@@ -70,9 +72,17 @@ void Graph::removeEdge(int x, int y)
         cout << "Not a valid edge - out of bounds" << endl;
 }
 
+// function to detect an edge
 bool Graph::isEdge(int x, int y)
 {
     if (x >= 0 && y >= 0 && x < V && y >= V)
         return adj[x][y];
     return false;
 }
+
+// function to return the number of vertices
+int Graph::getSize()
+{
+	return V;
+}
+
