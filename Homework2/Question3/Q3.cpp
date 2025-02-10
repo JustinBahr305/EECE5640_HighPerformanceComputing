@@ -83,7 +83,7 @@ int main()
                 graph.addEdge(i, j);
 
     // prints the graph's adjacency matrix
-    cout << "Here is the graph:" << endl;
+    cout << endl << "Here is the graph:" << endl;
     graph.printGraph();
     cout << endl;
 
@@ -120,7 +120,7 @@ int main()
 
     // prints the number of colors used and the runtime
     cout << "Colors used: " << numColors << endl;
-    cout << "Time to execute: " << run_time << " ns" << endl;
+    cout << "Time to execute: " << run_time << " ns" << endl << endl;;
 
     // prints the colors of all vertices
     cout << "Colors of each vertex: " << endl;

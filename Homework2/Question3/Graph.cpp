@@ -51,7 +51,7 @@ void Graph::printGraph()
 // function to add an edge
 void Graph::addEdge(int x, int y)
 {
-    if (x >= 0 && y >= 0 && x < V && y >= V)
+    if (x >= 0 && y >= 0 && x < V && y < V)
     {
         adj[x][y] = true;
         adj[y][x] = true;
