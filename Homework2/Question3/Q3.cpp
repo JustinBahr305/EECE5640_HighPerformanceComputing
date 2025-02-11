@@ -43,12 +43,12 @@ int color(Graph g, int colors[], int numThreads)
         {
             if (defective[i])
             {
-                cout << "Vert " << i << ": " << defective[i] << " ";
                 // creates boolean array to trak unavailable colors
-                bool unavailable[numVertices] = {false};
+                bool unavailable[numVertices] = {0};
 
                 for (int j = 0; j < numVertices; j++)
                 {
+                    cout << "Vert" << i << " checked vert" << j << endl;
                     // marks a colors as unavailable if a neighboring vertex is that color
                     if (g.isEdge(i,j) && colors[j] != -1)
                     {
@@ -70,7 +70,7 @@ int color(Graph g, int colors[], int numThreads)
         }
 
         // #pragma omp barrier
-        bool def[numVertices] = {false};
+        bool def[numVertices] = {0};
         inProgress = false;
 
         // #pragma omp for
