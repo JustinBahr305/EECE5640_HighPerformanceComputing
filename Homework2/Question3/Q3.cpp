@@ -21,14 +21,23 @@ int color(Graph g, int colors[], int numThreads)
     // colors the first vertex
     colors[0] = 0;
 
-    // creates a boolean array outside the parallel section to stores improperly colored vertices
-    bool defective[numVertices] = {true};
+    // creates a boolean to track when still in progress
     bool inProgress = true;
+
+    // creates a boolean array outside the parallel section to stores improperly colored vertices
+    bool defective[numVertices];
+    defective[0] = false;
+
+    // omp_set_num_threads(numThreads);
+    // #pragma omp for
+    for (int i = 0; i < numVertices; i++)
+    {
+        defective[i] = true;
+    }
 
     // continues till correctly colored
     while (inProgress)
     {
-        // omp_set_num_threads(numThreads);
         // #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
@@ -57,7 +66,7 @@ int color(Graph g, int colors[], int numThreads)
                         break;
                     }
                 }
-            }
+            } // end parallel section
         }
 
         // #pragma omp barrier
@@ -75,7 +84,7 @@ int color(Graph g, int colors[], int numThreads)
                     def[j] = true;
                 }
             }
-        }
+        } // end parallel section
 
         // #pragma omp barrier
         for (int i = 1; i < numVertices; i++)
@@ -91,7 +100,7 @@ int color(Graph g, int colors[], int numThreads)
         {
             // #pragma omp for
             for (int i = 0; i < numVertices; i++)
-                defective[i] = def[i];
+                defective[i] = def[i]; // end parallel section
         }
 
     }
@@ -116,7 +125,7 @@ int color(Graph g, int colors[], int numThreads)
             if (localMax > numColors)
                 numColors = localMax;
         }
-    }
+    } // end parallel section
 
     return numColors + 1;
 }
