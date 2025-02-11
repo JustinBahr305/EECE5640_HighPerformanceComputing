@@ -117,7 +117,6 @@ int color(Graph g, int colors[], int numThreads)
             {
                 localMax = colors[i];
             }
-
         }
 
         // critical call to update numColors with the highest local max
