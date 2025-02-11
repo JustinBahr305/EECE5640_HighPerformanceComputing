@@ -32,6 +32,7 @@ int color(Graph g, int colors[], int numThreads)
         // #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
+            cout << "Run: " << i << endl;
             if (defective[i])
             {
                 // creates boolean array to trak unavailable colors
