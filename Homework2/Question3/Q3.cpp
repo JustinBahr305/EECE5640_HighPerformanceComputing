@@ -28,8 +28,8 @@ int color(Graph g, int colors[], int numThreads)
     // continues till correctly colored
     while (inProgress)
     {
-        #pragma omp parallel num_threads(numThreads)
-        #pragma omp for
+        // omp_set_num_threads(numThreads);
+        // #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
             if (defective[i])
@@ -56,12 +56,11 @@ int color(Graph g, int colors[], int numThreads)
             }
         }
 
-        #pragma omp barrier
+        // #pragma omp barrier
         bool def[numVertices] = {false};
         inProgress = false;
 
-        #pragma omp parallel num_threads(numThreads)
-        #pragma omp for
+        // #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
             for (int j = i+1; j < numVertices; j++)
@@ -74,15 +73,14 @@ int color(Graph g, int colors[], int numThreads)
             }
         }
 
-        #pragma omp barrier
+        // #pragma omp barrier
         for (int i = 1; i < numVertices; i++)
         {
             inProgress = true;
             break;
         }
 
-        #pragma omp parallel num_threads(numThreads)
-        #pragma omp for
+        // #pragma omp for
         for (int i = 0; i < numVertices; i++)
             defective[i] = def[i];
     }
@@ -90,10 +88,10 @@ int color(Graph g, int colors[], int numThreads)
     // creates a variable to store the number of colors used
     int numColors;
 
-    #pragma omp parallel num_threads(numThreads)
+    // #pragma omp parallel num_threads(numThreads)
     {
         int localMax = 0;
-        #pragma omp for nowait // finds local maximums in parallel
+        // #pragma omp for // finds local maximums in parallel
         for (int i = 1; i < numVertices; i++)
         {
             // updates the local maximum if a higher one is found
@@ -102,7 +100,7 @@ int color(Graph g, int colors[], int numThreads)
         }
 
         // critical call to update numColors with the highest local max
-        #pragma omp critical
+        // #pragma omp critical
         {
             if (localMax > numColors)
                 numColors = localMax;
