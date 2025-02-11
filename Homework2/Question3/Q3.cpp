@@ -65,7 +65,7 @@ int color(Graph g, int colors[], int numThreads)
         {
             for (int j = i+1; j < numVertices; j++)
             {
-                // marks a colors as unavailable if a neighboring vertex is that color
+                // marks a vertex defective if a neighboring vertex is that color
                 if (g.isEdge(i,j) && colors[i] == colors[j])
                 {
                     def[j] = true;
@@ -76,13 +76,20 @@ int color(Graph g, int colors[], int numThreads)
         // #pragma omp barrier
         for (int i = 1; i < numVertices; i++)
         {
-            inProgress = true;
-            break;
+            if (def[i])
+            {
+                inProgress = true;
+                break;
+            }
         }
 
-        // #pragma omp for
-        for (int i = 0; i < numVertices; i++)
-            defective[i] = def[i];
+        if (inProgress)
+        {
+            // #pragma omp for
+            for (int i = 0; i < numVertices; i++)
+                defective[i] = def[i];
+        }
+
     }
 
     // creates a variable to store the number of colors used
@@ -148,6 +155,7 @@ int main()
 
     // creates a map to translate color numbers to strings for output
     map<int, string> colorMap;
+    colorMap[-1] = "None";
     colorMap[0] = "red";
     colorMap[1] = "blue";
     colorMap[2] = "green";
