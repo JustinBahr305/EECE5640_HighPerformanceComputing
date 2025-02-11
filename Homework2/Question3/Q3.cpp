@@ -35,7 +35,7 @@ int color(Graph g, int colors[], int numThreads)
             // marks a colors as unavailable if a neighboring vertex is that color
             if (g.isEdge(i,j) && colors[j] != -1)
                 unavailable[colors[j]] = true;
-        }
+        } // end parallel region
 
         // colors a vertex with the first available color
         for (int k = 0; k < numVertices; k++)
@@ -54,7 +54,7 @@ int color(Graph g, int colors[], int numThreads)
     // creates a variable for the local maxes
     int localMax = 0;
 
-    #pragma omp parallel num_threads(numThreads) private(localMax)
+    #pragma omp parallel private(localMax)
     {
         #pragma omp for nowait // finds local maximums in parallel
         for (int i = 1; i < numVertices; i++)
