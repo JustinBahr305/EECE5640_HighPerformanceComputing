@@ -29,7 +29,7 @@ int color(Graph g, int colors[], int numThreads)
         // creates boolean array to trak unavailable colors
         bool unavailable[numVertices] = {0};
 
-        #pragma omp parallel for nowait
+        #pragma omp parallel for
         for (int j = 0; j < numVertices; j++)
         {
             // marks a colors as unavailable if a neighboring vertex is that color
