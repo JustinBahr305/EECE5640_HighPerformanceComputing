@@ -63,7 +63,7 @@ void Graph::addEdge(int x, int y)
 // function to remove an edge
 void Graph::removeEdge(int x, int y)
 {
-    if (x >= 0 && y >= 0 && x < V && y >= V)
+    if (x >= 0 && y >= 0 && x < V && y < V)
     {
         adj[x][y] = false;
         adj[y][x] = false;
@@ -75,7 +75,7 @@ void Graph::removeEdge(int x, int y)
 // function to detect an edge
 bool Graph::isEdge(int x, int y)
 {
-    if (x >= 0 && y >= 0 && x < V && y >= V)
+    if (x >= 0 && y >= 0 && x < V && y < V)
         return adj[x][y];
     return false;
 }

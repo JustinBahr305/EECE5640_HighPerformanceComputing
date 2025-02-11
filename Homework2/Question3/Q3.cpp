@@ -48,8 +48,6 @@ int color(Graph g, int colors[], int numThreads)
 
                 for (int j = 0; j < numVertices; j++)
                 {
-                    cout << "Vert" << j << " vert" << i << ": " << g.isEdge(i,j) << endl;
-                    cout << colors[j] << endl;
                     // marks a colors as unavailable if a neighboring vertex is that color
                     if (g.isEdge(i,j) && colors[j] != -1)
                     {
