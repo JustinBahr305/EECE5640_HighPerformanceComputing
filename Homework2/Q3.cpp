@@ -22,29 +22,82 @@ int color(Graph g, int colors[], int numThreads)
     // colors the first vertex
     colors[0] = 0;
 
+    // creates a boolean to track when still in progress
+    bool inProgress = true;
+
+    // creates a boolean array outside the parallel section to stores improperly colored vertices
+    bool defective[numVertices];
+    defective[0] = false;
+
     omp_set_num_threads(numThreads);
-
-    for (int i = 1; i < numVertices; i++)
+    #pragma omp for
+    for (int i = 0; i < numVertices; i++)
     {
-        // creates boolean array to trak unavailable colors
-        bool unavailable[numVertices] = {0};
+        defective[i] = true;
+    }
 
-        #pragma omp parallel for nowait
-        for (int j = 0; j < numVertices; j++)
+    // continues till correctly colored
+    while (inProgress)
+    {
+        #pragma omp for
+        for (int i = 1; i < numVertices; i++)
         {
-            // marks a colors as unavailable if a neighboring vertex is that color
-            if (g.isEdge(i,j) && colors[j] != -1)
-                unavailable[colors[j]] = true;
+            if (defective[i])
+            {
+                // creates boolean array to trak unavailable colors
+                bool unavailable[numVertices] = {0};
+
+                for (int j = 0; j < numVertices; j++)
+                {
+                    // marks a colors as unavailable if a neighboring vertex is that color
+                    if (g.isEdge(i,j) && colors[j] != -1)
+                        unavailable[colors[j]] = true;
+                }
+
+                // colors a vertex with the first available color
+                for (int k = 0; k < numVertices; k++)
+                {
+                    if (!unavailable[k])
+                    {
+                        colors[i] = k;
+                        break;
+                    }
+                }
+            } // end parallel section
         }
 
-        // colors a vertex with the first available color
-        for (int k = 0; k < numVertices; k++)
+        #pragma omp barrier
+            bool def[numVertices] = {0};
+            inProgress = false;
+
+        #pragma omp for
+        for (int i = 1; i < numVertices; i++)
         {
-            if (!unavailable[k])
+            for (int j = i+1; j < numVertices; j++)
             {
-                colors[i] = k;
+                // marks a vertex defective if a neighboring vertex is that color
+                if (g.isEdge(i,j) && colors[i] == colors[j])
+                {
+                    def[j] = true;
+                }
+            }
+        } // end parallel section
+
+        #pragma omp barrier
+        for (int i = 1; i < numVertices; i++)
+        {
+            if (def[i])
+            {
+                inProgress = true;
                 break;
             }
+        }
+
+        if (inProgress)
+        {
+            #pragma omp for
+            for (int i = 0; i < numVertices; i++)
+                defective[i] = def[i]; // end parallel section
         }
     }
 
@@ -119,19 +172,19 @@ int main()
     // creates a map to translate color numbers to strings for output
     map<int, string> colorMap;
     colorMap[-1] = "None";
-    colorMap[0] = "Red";
-    colorMap[1] = "Blue";
-    colorMap[2] = "Green";
-    colorMap[3] = "Yellow";
-    colorMap[4] = "Orange";
-    colorMap[5] = "Purple";
-    colorMap[6] = "White";
-    colorMap[7] = "Black";
-    colorMap[8] = "Pink";
-    colorMap[9] = "Gray";
+    colorMap[0] = "red";
+    colorMap[1] = "blue";
+    colorMap[2] = "green";
+    colorMap[3] = "yellow";
+    colorMap[4] = "orange";
+    colorMap[5] = "purple";
+    colorMap[6] = "white";
+    colorMap[7] = "black";
+    colorMap[8] = "pink";
+    colorMap[9] = "gray";
     for (int i = 10; i < numVertices; i++)
     {
-        colorMap[i] = "Color" + to_string(i);
+        colorMap[i] = "color" + to_string(i);
     }
 
     // initialize the high resolution clock
