@@ -28,7 +28,6 @@ int color(Graph g, int colors[], int numThreads)
     {
         // creates boolean array to trak unavailable colors
         bool unavailable[numVertices] = {0};
-        cout << unavailable[0] << endl;
 
         #pragma omp parallel for
         for (int j = 0; j < numVertices; j++)
@@ -43,6 +42,7 @@ int color(Graph g, int colors[], int numThreads)
         {
             if (!unavailable[k])
             {
+                cout << k << endl;
                 colors[i] = k;
                 break;
             }
