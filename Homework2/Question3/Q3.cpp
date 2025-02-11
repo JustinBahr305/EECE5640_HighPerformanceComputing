@@ -40,9 +40,9 @@ int color(Graph g, int colors[], int numThreads)
         // colors a vertex with the first available color
         for (int k = 0; k < numVertices; k++)
         {
+            cout << unavailable[k] << endl;
             if (!unavailable[k])
             {
-                cout << k << endl;
                 colors[i] = k;
                 break;
             }
