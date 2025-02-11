@@ -28,8 +28,8 @@ int color(Graph g, int colors[], int numThreads)
     bool defective[numVertices];
     defective[0] = false;
 
-    // omp_set_num_threads(numThreads);
-    // #pragma omp for
+    omp_set_num_threads(numThreads);
+    #pragma omp for
     for (int i = 0; i < numVertices; i++)
     {
         defective[i] = true;
@@ -38,7 +38,7 @@ int color(Graph g, int colors[], int numThreads)
     // continues till correctly colored
     while (inProgress)
     {
-        // #pragma omp for
+        #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
             if (defective[i])
@@ -50,10 +50,7 @@ int color(Graph g, int colors[], int numThreads)
                 {
                     // marks a colors as unavailable if a neighboring vertex is that color
                     if (g.isEdge(i,j) && colors[j] != -1)
-                    {
                         unavailable[colors[j]] = true;
-                        cout << "Marked" << endl;
-                    }
                 }
 
                 // colors a vertex with the first available color
@@ -68,11 +65,11 @@ int color(Graph g, int colors[], int numThreads)
             } // end parallel section
         }
 
-        // #pragma omp barrier
+        #pragma omp barrier
         bool def[numVertices] = {0};
         inProgress = false;
 
-        // #pragma omp for
+        #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
             for (int j = i+1; j < numVertices; j++)
@@ -85,7 +82,7 @@ int color(Graph g, int colors[], int numThreads)
             }
         } // end parallel section
 
-        // #pragma omp barrier
+        #pragma omp barrier
         for (int i = 1; i < numVertices; i++)
         {
             if (def[i])
@@ -97,7 +94,7 @@ int color(Graph g, int colors[], int numThreads)
 
         if (inProgress)
         {
-            // #pragma omp for
+            #pragma omp for
             for (int i = 0; i < numVertices; i++)
                 defective[i] = def[i]; // end parallel section
         }
@@ -107,10 +104,10 @@ int color(Graph g, int colors[], int numThreads)
     // creates a variable to store the number of colors used
     int numColors;
 
-    // #pragma omp parallel num_threads(numThreads)
+    #pragma omp parallel num_threads(numThreads)
     {
         int localMax = 0;
-        // #pragma omp for // finds local maximums in parallel
+        #pragma omp for private(localMax) // finds local maximums in parallel
         for (int i = 1; i < numVertices; i++)
         {
             // updates the local maximum if a higher one is found
