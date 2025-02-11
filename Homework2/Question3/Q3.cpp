@@ -18,40 +18,89 @@ int color(Graph g, int colors[], int numThreads)
     // stores the number of vertices
     int numVertices = g.getSize();
 
-    // creates a variable to store the number of colors used
-    int numColors = 0;
+    // colors the first vertex
+    colors[0] = 0;
 
-    #pragma omp parallel for num_threads(numThreads)
-    for (int i = 0; i < numVertices; i++)
+    // creates a boolean array outside the parallel section to stores improperly colored vertices
+    bool defective[numVertices] = {true};
+    bool inProgress = true;
+
+    // continues till correctly colored
+    while (inProgress)
     {
-        // creates boolean array to trak unavailable colors
-        bool unavailable[numVertices] = {false};
-
-        for (int j = 0; j < numVertices; j++)
+        #pragma omp parallel for num_threads(numThreads)
+        for (int i = 1; i < numVertices; i++)
         {
-            // marks a colors as unavailable if a neighboring vertex is that color
-            if (g.isEdge(i,j) && colors[j] != -1)
-                unavailable[colors[j]] = true;
+            if (defective[i])
+            {
+                // creates boolean array to trak unavailable colors
+                bool unavailable[numVertices] = {false};
+
+                for (int j = 0; j < numVertices; j++)
+                {
+                    // marks a colors as unavailable if a neighboring vertex is that color
+                    if (g.isEdge(i,j) && colors[j] != -1)
+                        unavailable[colors[j]] = true;
+                }
+
+                // colors a vertex with the first available color
+                for (int k = 0; k < numVertices; k++)
+                {
+                    if (!unavailable[k])
+                    {
+                        colors[i] = k;
+                        break;
+                    }
+                }
+            }
         }
 
-        // colors a vertex with the first available color
-        for (int k = 0; k < numVertices; k++)
+        #pragma omp barrier
+        bool def[numVertices] = {false};
+        inProgress = false;
+
+        #pragma omp parallel for num_threads(numThreads)
+        for (int i = 1; i < numVertices; i++)
         {
-            if (!unavailable[k])
+            for (int j = i+1; j < numVertices; j++)
             {
-                colors[i] = k;
-                #pragma omp critical
-                {
-                    // if this is the first time a color is used, numColors is incremented
-                    if (k > numColors)
-                        numColors = k;;
-                }
-                break;
+                // marks a colors as unavailable if a neighboring vertex is that color
+                if (g.isEdge(i,j) && colors[j] == colors[j])
+                    def[j] = true;
             }
+        }
+
+        #pragma omp barrier
+        for (int i = 0; i < numVertices; i++)
+            defective[i] = def[i];
+        for (int i = 1; i < numVertices; i++)
+            if (defective[i])
+                inProgress = true;
+    }
+
+    // creates a variable to store the number of colors used
+    int numColors;
+
+    #pragma omp parallel num_threads(numThreads)
+    {
+        int localMax = 0;
+        #pragma omp for nowait // finds local maximums in parallel
+        for (int i = 1; i < numVertices; i++)
+        {
+            // updates the local maximum if a higher one is found
+            if (colors[i] > localMax)
+                localMax = colors[i];
+        }
+
+        // critical call to update numColors with the highest local max
+        #pragma omp critical
+        {
+            if (localMax > numColors)
+                numColors = localMax;
         }
     }
 
-    return numColors;
+    return numColors + 1;
 }
 
 int main()
