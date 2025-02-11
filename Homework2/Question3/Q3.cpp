@@ -121,13 +121,11 @@ int color(Graph g, int colors[], int numThreads)
 
         }
 
-        // atomic call to update numColors with the highest local max
-        if (localMax > numColors)
-        {
-            #pragma omp atomic
+        // critical call to update numColors with the highest local max
+        #pragma omp critical
+            if (localMax > numColors)
                 numColors = localMax;
-        }
-            
+
     } // end parallel section
 
     return numColors + 1;
