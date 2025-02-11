@@ -54,7 +54,7 @@ int color(Graph g, int colors[], int numThreads)
     // creates a variable for the local maxes
     int localMax = 0;
 
-    #pragma omp parallel private(localMax)
+    #pragma omp parallel num_threads(numThreads) private(localMax)
     {
         #pragma omp for nowait // finds local maximums in parallel
         for (int i = 1; i < numVertices; i++)
@@ -130,7 +130,7 @@ int main()
     colorMap[9] = "Gray";
     for (int i = 10; i < numVertices; i++)
     {
-        colorMap[i] = "Color" + to_string(i);
+        colorMap[i] = "Color" + to_string(i+1);
     }
 
     // initialize the high resolution clock
