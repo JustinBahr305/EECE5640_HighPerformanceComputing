@@ -41,7 +41,10 @@ int color(Graph g, int colors[], int numThreads)
                 {
                     // marks a colors as unavailable if a neighboring vertex is that color
                     if (g.isEdge(i,j) && colors[j] != -1)
+                    {
                         unavailable[colors[j]] = true;
+                        cout << "Marked" << endl;
+                    }
                 }
 
                 // colors a vertex with the first available color
