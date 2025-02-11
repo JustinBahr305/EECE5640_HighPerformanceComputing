@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include <map>
+#include <string>
 #include <omp.h>
 #include "Graph.h"
 
@@ -66,8 +67,8 @@ int color(Graph g, int colors[], int numThreads)
         }
 
         #pragma omp barrier
-        bool def[numVertices] = {0};
-        inProgress = false;
+            bool def[numVertices] = {0};
+            inProgress = false;
 
         #pragma omp for
         for (int i = 1; i < numVertices; i++)
@@ -98,7 +99,6 @@ int color(Graph g, int colors[], int numThreads)
             for (int i = 0; i < numVertices; i++)
                 defective[i] = def[i]; // end parallel section
         }
-
     }
 
     // creates a variable to store the number of colors used
@@ -116,7 +116,6 @@ int color(Graph g, int colors[], int numThreads)
             if (colors[i] > localMax)
             {
                 localMax = colors[i];
-                cout << localMax << endl;
             }
         }
 
@@ -127,7 +126,6 @@ int color(Graph g, int colors[], int numThreads)
             if (localMax > numColors)
             {
                 numColors = localMax;
-                cout << numColors << endl;
             }
         }
     } // end parallel section
@@ -184,6 +182,10 @@ int main()
     colorMap[7] = "black";
     colorMap[8] = "pink";
     colorMap[9] = "gray";
+    for (int i = 10; i < numVertices; i++)
+    {
+        colorMap[i] = "color" + to_string(i);
+    }
 
     // initialize the high resolution clock
     typedef chrono::high_resolution_clock clock;;
