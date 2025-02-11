@@ -114,7 +114,11 @@ int color(Graph g, int colors[], int numThreads)
         {
             // updates the local maximum if a higher one is found
             if (colors[i] > localMax)
+            {
                 localMax = colors[i];
+                cout << localMax << endl;
+            }
+
         }
 
         // critical call to update numColors with the highest local max
@@ -193,16 +197,17 @@ int main()
     // casts run_time in nanoseconds
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
-    // prints the number of colors used and the runtime
-    cout << "Colors used: " << numColors << endl;
-    cout << "Time to execute: " << run_time << " ns" << endl << endl;;
-
     // prints the colors of all vertices
     cout << "Colors of each vertex: " << endl;
     for (int i = 0; i < numVertices; i++)
     {
         cout << "Vertex " << i  << ": " << colorMap[colors[i]] << endl;
     }
+    cout << endl;
+
+    // prints the number of colors used and the runtime
+    cout << "Colors used: " << numColors << endl;
+    cout << "Time to execute: " << run_time << " ns" << endl;
 
     return 0;
 }
