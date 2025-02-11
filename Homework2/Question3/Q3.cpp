@@ -69,7 +69,6 @@ int color(Graph g, int colors[], int numThreads)
         // critical call to update numColors with the highest local max
         #pragma omp critical
         {
-            cout << "crit: " << localMax << endl;
             if (localMax > numColors)
             {
                 numColors = localMax;
