@@ -65,7 +65,7 @@ int color(Graph g, int colors[], int numThreads)
             for (int j = i+1; j < numVertices; j++)
             {
                 // marks a colors as unavailable if a neighboring vertex is that color
-                if (g.isEdge(i,j) && colors[j] == colors[j])
+                if (g.isEdge(i,j) && colors[i] == colors[j])
                     def[j] = true;
             }
         }
