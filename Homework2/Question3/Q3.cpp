@@ -28,7 +28,8 @@ int color(Graph g, int colors[], int numThreads)
     // continues till correctly colored
     while (inProgress)
     {
-        #pragma omp parallel for num_threads(numThreads)
+        #pragma omp parallel num_threads(numThreads)
+        #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
             if (defective[i])
@@ -59,23 +60,31 @@ int color(Graph g, int colors[], int numThreads)
         bool def[numVertices] = {false};
         inProgress = false;
 
-        #pragma omp parallel for num_threads(numThreads)
+        #pragma omp parallel num_threads(numThreads)
+        #pragma omp for
         for (int i = 1; i < numVertices; i++)
         {
             for (int j = i+1; j < numVertices; j++)
             {
                 // marks a colors as unavailable if a neighboring vertex is that color
                 if (g.isEdge(i,j) && colors[i] == colors[j])
+                {
                     def[j] = true;
+                }
             }
         }
 
         #pragma omp barrier
+        for (int i = 1; i < numVertices; i++)
+        {
+            inProgress = true;
+            break;
+        }
+
+        #pragma omp parallel num_threads(numThreads)
+        #pragma omp for
         for (int i = 0; i < numVertices; i++)
             defective[i] = def[i];
-        for (int i = 1; i < numVertices; i++)
-            if (defective[i])
-                inProgress = true;
     }
 
     // creates a variable to store the number of colors used
