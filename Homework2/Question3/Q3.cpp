@@ -22,19 +22,21 @@ int color(Graph g, int colors[], int numThreads)
     // colors the first vertex
     colors[0] = 0;
 
-    omp_set_num_threads(numThreads);
+    // creates boolean array to trak unavailable colors
+    bool unavailable[numVertices];
 
     for (int i = 1; i < numVertices; i++)
     {
-        // creates boolean array to trak unavailable colors
-        bool unavailable[numVertices] = {0};
-
-        #pragma omp parallel for
-        for (int j = 0; j < numVertices; j++)
+        #pragma omp parallel num_threads(numThreads)
         {
-            // marks a colors as unavailable if a neighboring vertex is that color
-            if (g.isEdge(i,j) && colors[j] != -1)
-                unavailable[colors[j]] = true;
+            unavailable = {0};
+            #pragma omp parallel for
+            for (int j = 0; j < numVertices; j++)
+            {
+                // marks a colors as unavailable if a neighboring vertex is that color
+                if (g.isEdge(i,j) && colors[j] != -1)
+                    unavailable[colors[j]] = true;
+            }
         } // end parallel region
 
         #pragma omp barrier // colors a vertex with the first available color
