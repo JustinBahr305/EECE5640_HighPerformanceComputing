@@ -24,29 +24,24 @@ int color(Graph g, int colors[], int numThreads)
 
     for (int i = 1; i < numVertices; i++)
     {
+        // creates boolean array to trak unavailable colors
+        bool unavailable[numVertices] = {0};
 
-        #pragma omp parallel num_threads(numThreads)
+        #pragma omp parallel for num_threads(numThreads)
+        for (int j = 0; j < numVertices; j++)
         {
-            // creates boolean array to trak unavailable colors
-            bool unavailable[numVertices] = {0};
+            // marks a colors as unavailable if a neighboring vertex is that color
+            if (g.isEdge(i,j) && colors[j] != -1)
+                unavailable[colors[j]] = true;
+        } // end parallel region
 
-            #pragma omp for
-            for (int j = 0; j < numVertices; j++)
+        // colors a vertex with the first available color
+        for (int k = 0; k < numVertices; k++)
+        {
+            if (!unavailable[k])
             {
-                // marks a colors as unavailable if a neighboring vertex is that color
-                if (g.isEdge(i,j) && colors[j] != -1)
-                    unavailable[colors[j]] = true;
-            } // end parallel region
-
-            #pragma omp barrier // colors a vertex with the first available color
-            cout << "Thread" << omp_get_thread_num() << ": " << unavailable[0] << endl;
-            for (int k = 0; k < numVertices; k++)
-            {
-                if (!unavailable[k])
-                {
-                    colors[i] = k;
-                    break;
-                }
+                colors[i] = k;
+                break;
             }
         }
     }
