@@ -51,7 +51,7 @@ int color(Graph g, int colors[], int numThreads)
     // creates a variable to store the number of colors used
     int numColors = 0;
 
-    #pragma omp parallel num_threads(numThreads) private(localMax)
+    #pragma omp parallel num_threads(numThreads)
     {
         // creates a variable for the local maxes
         int localMax = 0;
