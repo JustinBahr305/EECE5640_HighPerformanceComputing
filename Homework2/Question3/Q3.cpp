@@ -29,7 +29,7 @@ int color(Graph g, int colors[], int numThreads)
         {
             // creates boolean array to trak unavailable colors
             bool unavailable[numVertices] = {0};
-            
+
             #pragma omp for
             for (int j = 0; j < numVertices; j++)
             {
@@ -39,6 +39,7 @@ int color(Graph g, int colors[], int numThreads)
             } // end parallel region
 
             #pragma omp barrier // colors a vertex with the first available color
+            cout << "Thread" << omp_get_thread_num() << ": " << unavailable[0] << endl;
             for (int k = 0; k < numVertices; k++)
             {
                 if (!unavailable[k])
