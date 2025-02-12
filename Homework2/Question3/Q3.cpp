@@ -64,6 +64,7 @@ int color(Graph g, int colors[], int numThreads)
             {
                 localMax = colors[i];
                 cout << "Thread" << omp_get_thread_num << ": " << localMax << endl;
+                cout << "numColors = " << numColors << endl;
             }
         }
 
