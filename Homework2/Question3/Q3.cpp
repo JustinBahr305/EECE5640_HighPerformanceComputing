@@ -51,12 +51,11 @@ int color(Graph g, int colors[], int numThreads)
     // creates a variable to store the number of colors used
     int numColors = 0;
 
-    // creates a variable for the local maxes
-    int localMax = 0;
-
     #pragma omp parallel num_threads(numThreads) private(localMax)
     {
-        cout << "Thread" << omp_get_thread_num << ": numColors = " << numColors << endl;
+        // creates a variable for the local maxes
+        int localMax = 0;
+
         #pragma omp for nowait // finds local maximums in parallel
         for (int i = 1; i < numVertices; i++)
         {
@@ -64,7 +63,6 @@ int color(Graph g, int colors[], int numThreads)
             if (colors[i] > localMax)
             {
                 localMax = colors[i];
-                cout << "Thread" << omp_get_thread_num << ": " << localMax << endl;
             }
         }
 
@@ -74,7 +72,6 @@ int color(Graph g, int colors[], int numThreads)
             if (localMax > numColors)
             {
                 numColors = localMax;
-                cout << numColors << endl;
             }
         }
     } // end parallel section
