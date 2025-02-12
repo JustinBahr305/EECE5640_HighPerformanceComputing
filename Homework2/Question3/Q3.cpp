@@ -34,7 +34,7 @@ int color(Graph g, int colors[], int numThreads)
         } // end parallel region
 
         #pragma omp barrier // barrier to prevent race conditions
-        
+
         #pragma omp parallel for num_threads(numThreads)
         for (int j = 0; j < numVertices; j++)
         {
@@ -42,6 +42,8 @@ int color(Graph g, int colors[], int numThreads)
             if (g.isEdge(i,j) && colors[j] != -1)
                 unavailable[colors[j]] = true;
         } // end parallel region
+
+        cout << "Vert" << i << ": " << unavailable[0] << endl;
 
         // colors a vertex with the first available color
         for (int k = 0; k < numVertices; k++)
