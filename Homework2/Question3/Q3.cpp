@@ -43,7 +43,7 @@ int color(Graph g, int colors[], int numThreads)
                 unavailable[colors[j]] = true;
         } // end parallel region
 
-        cout << "Vert" << i << ": " << unavailable[0] << endl;
+        #pragma omp barrier // barrier to prevent race conditions
 
         // colors a vertex with the first available color
         for (int k = 0; k < numVertices; k++)
