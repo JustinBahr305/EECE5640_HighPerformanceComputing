@@ -25,20 +25,21 @@ int color(Graph g, int colors[], int numThreads)
     for (int i = 1; i < numVertices; i++)
     {
         // creates boolean array to trak unavailable colors
-        int unavailable[numVertices] = {0};
+        bool unavailable[numVertices] = {0};
 
         #pragma omp parallel for num_threads(numThreads)
         for (int j = 0; j < numVertices; j++)
         {
             // marks a colors as unavailable if a neighboring vertex is that color
             if (g.isEdge(i,j) && colors[j] != -1)
-                unavailable[colors[j]] = 1;
+                #pragma atomic write // atomic write to prevent race conditions
+                    unavailable[colors[j]] = true;
         } // end parallel region
 
-        #pragma omp barrier // colors a vertex with the first available color
+        // colors a vertex with the first available color
         for (int k = 0; k < numVertices; k++)
         {
-            if (!unavailable[k])
+            if (unavailable[k] == 0)
             {
                 colors[i] = k;
                 break;
