@@ -33,6 +33,8 @@ int color(Graph g, int colors[], int numThreads)
             unavailable[i] = false;
         } // end parallel region
 
+        #pragma omp barrier // barrier to prevent race conditions
+        
         #pragma omp parallel for num_threads(numThreads)
         for (int j = 0; j < numVertices; j++)
         {
