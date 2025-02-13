@@ -1,4 +1,4 @@
-// Q1_leibniz
+// Q1_leibniz_omp
 // Created by Justin Bahr on 1/31/2025.
 // EECE 5640 - High Performance Computing
 // Leibniz Estimation for pi using OpenMP
@@ -51,7 +51,7 @@ int main()
         cin >> numThreads;
     } while (numThreads < 1);
 
-    // allows the user to choose the number of darts
+    // allows the user to choose the number of terms
     cout << "How many terms would you like to add?" << endl;
     cin >> numTerms;
 

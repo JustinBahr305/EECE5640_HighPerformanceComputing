@@ -40,8 +40,7 @@ int color(Graph g, int colors[], int numThreads)
         {
             // marks a colors as unavailable if a neighboring vertex is that color
             if (g.isEdge(i,j) && colors[j] != -1)
-                #pragma omp atomic write
-                    unavailable[colors[j]] = true;
+                unavailable[colors[j]] = true;
         } // end parallel region
 
         #pragma omp barrier // barrier to prevent race conditions

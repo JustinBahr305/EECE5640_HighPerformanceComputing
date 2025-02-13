@@ -1,4 +1,4 @@
-// Q1_pthread
+// Q1_leibniz_pthread
 // Created by Justin Bahr on 1/31/2025.
 // EECE 5640 - High Performance Computing
 // Monte Carlo Estimation for pi using Pthreads
@@ -11,62 +11,38 @@
 
 using namespace std;
 
-// defines the dimensions of the dartboard
-// x coordinates from -DIM to +DIM
-// y coordinates from -DIM to +DIM
-const int DIM = 500;
-
 // global array for local sums
-int *localSums;
+double *localSums;
 
 // structure for thread arguments
 struct ThreadArgs
 {
-    int numDarts;
+    int numTerms;
     int threadNum;
+    int sliceSize;
 };
 
-bool inCircle(int x, int y)
-{
-    return (x * x + y * y <= DIM * DIM);
-}
-
-void* threadDart(void* numDartsArg)
+void* threadLeibniz(void* numTermsArg)
 {
     // converts the numDarts arguments to ints
-    ThreadArgs* numDartsStruct = (ThreadArgs*)numDartsArg;
-    int numDarts = numDartsStruct->numDarts;
-    int threadNum = numDartsStruct->threadNum;
+    ThreadArgs* numTermsStruct = (ThreadArgs*)numTermsArg;
+    int numTerms = numTermsStruct->numTerms;
+    int threadNum = numTermsStruct->threadNum;
+    int sliceSize = numTermsStruct->sliceSize;
 
-    //creates variables for the x and y values of dart throws
-    int x;
-    int y;
-
-    // each thread given a unique random number generator
-    random_device randD;
-
-    // seeds randDom distribution based on the thread number
-    mt19937 gen(randD() ^ pthread_self());
-    uniform_int_distribution<int> dist(-DIM, DIM);
-
-    for (int i = 0; i < numDarts; i++)
+    for (int i = 0; i < numTerms; i++)
     {
-        x = dist(gen);
-        y = dist(gen);
-        if (inCircle(x,y))
-        {
-            localSums[threadNum]++;
-        }
+        int itr = i + threadNum*sliceSize;
+        localSums[threadNum] += (itr % 2 == 0 ? 1.0 : -1.0)/(2*itr+1);
     }
 
     return nullptr;
 }
 
-// function to estimate pi by throwing darts
-double piByDarts(int numThreads, int numDarts)
+double piByLeibniz(int numTerms, int numThreads)
 {
     // creates an array to store each thread's local sum, setting it to zero
-    localSums = new int[numThreads];
+    localSums = new double[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
         localSums[i] = 0;
@@ -77,21 +53,21 @@ double piByDarts(int numThreads, int numDarts)
     ThreadArgs args[numThreads];
 
     // defines the size for slicing the array to run in parallel
-    int sliceSize = numDarts / numThreads;
+    int sliceSize = numTerms / numThreads;
 
     for (int i = 0; i < numThreads; i++)
     {
-        args[i] = {sliceSize, i};
+        args[i] = {sliceSize, i, sliceSize};
     }
-    args[numThreads-1] = {numDarts - (numThreads-1)*sliceSize, numThreads-1};
+    args[numThreads-1] = {numTerms - (numThreads-1)*sliceSize, numThreads-1, sliceSize};
 
     // slices into as many pieces as there are threads and creates each thread process
     for (int i = 0; i < numThreads - 1; i++)
     {
-        pthread_create(&threads[i], nullptr, threadDart, &args[i]);
+        pthread_create(&threads[i], nullptr, threadLeibniz, &args[i]);
     }
 
-    pthread_create(&threads[numThreads - 1], nullptr, threadDart, &args[numThreads-1]);
+    pthread_create(&threads[numThreads - 1], nullptr, threadLeibniz, &args[numThreads-1]);
 
     // joins the Pthreads once they have completed
     for (int i = 0; i < numThreads; i++)
@@ -99,22 +75,22 @@ double piByDarts(int numThreads, int numDarts)
         pthread_join(threads[i], nullptr);
     }
 
-    int sumInCircle = 0;
+    double totalSum = 0.0;
 
     for (int i = 0; i < numThreads; i++)
     {
-        sumInCircle += localSums[i];
+        totalSum += localSums[i];
     }
 
     // returns the estimated value of pi
-    return 4.0 * sumInCircle / numDarts;
+    return 4.0 * totalSum;;
 }
 
 int main()
 {
-    // creates variables for the numbers of threads and darts
+    // creates a variable for the number of terms and threads
+    int numTerms;
     int numThreads;
-    int numDarts;
 
     // creates the placeholder for the calculated value of pi
     double calc_pi;
@@ -125,9 +101,9 @@ int main()
         cin >> numThreads;
     } while (numThreads < 1);
 
-    // allows the user to choose the number of darts
-    cout << "How many darts would you like to throw?" << endl;
-    cin >> numDarts;
+    // allows the user to choose the number of terms
+    cout << "How many terms would you like to add?" << endl;
+    cin >> numTerms;
 
     // initialize the high resolution clock
     typedef chrono::high_resolution_clock clock;;
@@ -135,7 +111,7 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
-    calc_pi = piByDarts(numThreads, numDarts);
+    calc_pi = piByLeibniz(numTerms, numThreads);
 
     // stops the clock
     auto end_time = clock::now();
