@@ -27,15 +27,15 @@ int color(Graph g, int colors[], int numThreads)
 
     for (int i = 1; i < numVertices; i++)
     {
-        // #pragma omp parallel for num_threads(numThreads)
+        #pragma omp parallel for num_threads(numThreads)
         for (int s = 0; s < numVertices; s++)
         {
             unavailable[s] = false;
         } // end parallel region
 
-        // #pragma omp barrier // barrier to prevent race conditions
+        #pragma omp barrier // barrier to prevent race conditions
 
-        // #pragma omp parallel for num_threads(numThreads)
+        #pragma omp parallel for num_threads(numThreads)
         for (int j = 0; j < numVertices; j++)
         {
             // marks a colors as unavailable if a neighboring vertex is that color
@@ -43,7 +43,7 @@ int color(Graph g, int colors[], int numThreads)
                 unavailable[colors[j]] = true;
         } // end parallel region
 
-        // #pragma omp barrier // barrier to prevent race conditions
+        #pragma omp barrier // barrier to prevent race conditions
 
         // colors a vertex with the first available color
         for (int k = 0; k < numVertices; k++)

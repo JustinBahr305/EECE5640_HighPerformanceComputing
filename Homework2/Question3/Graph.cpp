@@ -28,11 +28,11 @@ Graph::Graph(int v)
 // Graph destructor
 Graph::~Graph()
 {
-    for (int i = 0; i < V; i++)
+  	for (int i = 0; i < V; i++)
     {
-        delete[] adj[i];
+    	adj[i] = nullptr;
     }
-    delete[] adj;
+    adj = nullptr;
 }
 
 // function to print Graph
@@ -77,11 +77,8 @@ bool Graph::isEdge(int x, int y)
 {
     if (x >= 0 && y >= 0 && x < V && y < V)
         return adj[x][y];
-    else
-    {
-    	cout << "Not a valid edge - out of bounds" << endl;
-      	return false;
-    }
+    return false;
+
 }
 
 // function to return the number of vertices
