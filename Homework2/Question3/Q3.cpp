@@ -59,7 +59,6 @@ int color(Graph g, int colors[], int numThreads)
     // creates a variable to store the number of colors used
     int numColors = 0;
 
-    /*
     #pragma omp parallel num_threads(numThreads)
     {
         // creates a variable for the local maxes
@@ -83,7 +82,7 @@ int color(Graph g, int colors[], int numThreads)
                 numColors = localMax;
             }
         }
-    } // end parallel section */
+    } // end parallel section
 
     return numColors + 1;
 }
@@ -130,7 +129,7 @@ int main()
 
     // creates a map to translate color numbers to strings for output
     map<int, string> colorMap;
-    colorMap[-1] = "None";
+    // colorMap[-1] = "None";
     colorMap[0] = "Red";
     colorMap[1] = "Blue";
     colorMap[2] = "Green";
