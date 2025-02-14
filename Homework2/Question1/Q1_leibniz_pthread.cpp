@@ -30,10 +30,13 @@ void* threadLeibniz(void* numTermsArg)
     int threadNum = numTermsStruct->threadNum;
     int sliceSize = numTermsStruct->sliceSize;
 
-    for (int i = 0; i < numTerms; i++)
+    // stores the iteration starting and end points based on thread number
+    int start = threadNum*sliceSize;
+    int end = start + numTerms;
+
+    for (int i = start; i < end; i++)
     {
-        int itr = i + threadNum*sliceSize;
-        localSums[threadNum] += (itr % 2 == 0 ? 1.0 : -1.0)/(2*itr+1);
+        localSums[threadNum] += (i % 2 == 0 ? 1.0 : -1.0)/(2*i+1);
     }
 
     return nullptr;
