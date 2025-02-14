@@ -28,9 +28,9 @@ int color(Graph g, int colors[], int numThreads)
     for (int i = 1; i < numVertices; i++)
     {
         #pragma omp parallel for num_threads(numThreads)
-        for (int i = 0; i < numVertices; i++)
+        for (int s = 0; s < numVertices; s++)
         {
-            unavailable[i] = false;
+            unavailable[s] = false;
         } // end parallel region
 
         #pragma omp barrier // barrier to prevent race conditions
@@ -120,8 +120,12 @@ int main()
     graph.printGraph();
     cout << endl;
 
-    // creates an array to store the color of each vertex
-    int colors[numVertices] = {-1};
+    // creates an array to store the color of each vertex filled with -1
+    int colors[numVertices];
+    for (int i = 0; i < numVertices; i++)
+    {
+        colors[i] = -1;
+    }
 
     // creates a map to translate color numbers to strings for output
     map<int, string> colorMap;
