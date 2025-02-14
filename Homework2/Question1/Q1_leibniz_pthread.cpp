@@ -1,7 +1,7 @@
 // Q1_leibniz_pthread
 // Created by Justin Bahr on 1/31/2025.
 // EECE 5640 - High Performance Computing
-// Monte Carlo Estimation for pi using Pthreads
+// Leibniz Estimation for pi using Pthreads
 
 #include <iostream>
 #include <chrono>
@@ -21,6 +21,11 @@ struct ThreadArgs
     int threadNum;
     int sliceSize;
 };
+
+/*
+// creates a mutex and boolean for accumulation
+pthread_mutex_t *accumulator;
+bool *inUse; */
 
 void* threadLeibniz(void* numTermsArg)
 {
