@@ -77,7 +77,11 @@ bool Graph::isEdge(int x, int y)
 {
     if (x >= 0 && y >= 0 && x < V && y < V)
         return adj[x][y];
-    return false;
+    else
+    {
+    	cout << "Not a valid edge - out of bounds" << endl;
+      	return false;
+    }
 }
 
 // function to return the number of vertices

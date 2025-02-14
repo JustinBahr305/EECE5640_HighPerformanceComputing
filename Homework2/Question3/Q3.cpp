@@ -115,9 +115,12 @@ int main()
             if (i != j && rand() % 2 == 0)
                 graph.addEdge(i, j);
 
-    // prints the graph's adjacency matrix
-    cout << endl << "Here is the graph:" << endl;
-    graph.printGraph();
+    // prints the graph's adjacency matrix if it is small
+    if (graph.getSize() <= 30)
+    {
+        cout << endl << "Here is the graph:" << endl;
+        graph.printGraph();
+    }
     cout << endl;
 
     // creates an array to store the color of each vertex filled with -1
@@ -129,7 +132,7 @@ int main()
 
     // creates a map to translate color numbers to strings for output
     map<int, string> colorMap;
-    // colorMap[-1] = "None";
+    colorMap[-1] = "None";
     colorMap[0] = "Red";
     colorMap[1] = "Blue";
     colorMap[2] = "Green";
