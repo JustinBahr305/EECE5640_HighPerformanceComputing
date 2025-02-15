@@ -49,15 +49,20 @@ void* threadDart(void* numDartsArg)
     mt19937 gen(randD() ^ pthread_self());
     uniform_int_distribution<int> dist(-DIM, DIM);
 
+    // creates a temporary variable to store the local sum
+    int localSum = 0;
+
     for (int i = 0; i < numDarts; i++)
     {
         x = dist(gen);
         y = dist(gen);
         if (inCircle(x,y))
         {
-            localSums[threadNum]++;
+            localSum++;
         }
     }
+
+    localSums[threadNum] = localSum;
 
     return nullptr;
 }

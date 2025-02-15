@@ -22,11 +22,6 @@ struct ThreadArgs
     int sliceSize;
 };
 
-/*
-// creates a mutex and boolean for accumulation
-pthread_mutex_t *accumulator;
-bool *inUse; */
-
 void* threadLeibniz(void* numTermsArg)
 {
     // converts the numDarts arguments to ints
@@ -39,10 +34,15 @@ void* threadLeibniz(void* numTermsArg)
     int start = threadNum*sliceSize;
     int end = start + numTerms;
 
+    // creates a temporary variable to store the local sum
+    double localSum = 0.0;
+
     for (int i = start; i < end; i++)
     {
-        localSums[threadNum] += (i % 2 == 0 ? 1.0 : -1.0)/(2*i+1);
+        localSum += (i % 2 == 0 ? 1.0 : -1.0)/(2*i+1);
     }
+
+    localSums[threadNum] = localSum;
 
     return nullptr;
 }
