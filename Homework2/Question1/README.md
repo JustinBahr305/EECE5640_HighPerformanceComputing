@@ -5,6 +5,7 @@ This folder contains the following files:
 4. Q1_leibniz_omp.cpp
 5. Q1_pthread.cpp
 6. Q1_leibniz_pthread
+7. Q1.pdf
 
 Run the command "make" to generate the following executables:
 1. Q1_omp

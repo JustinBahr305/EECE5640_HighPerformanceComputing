@@ -1,7 +1,7 @@
-// Q2
-// Created by Justin Bahr on 1/31/2025.
+// Q2_alt
+// Created by Justin Bahr on 2/17/2025.
 // EECE 5640 - High Performance Computing
-// Dining Philosopher's Problem using Pthreads
+// Dining Philosopher's Problem using Pthreads  - Alternating Method
 
 #include <iostream>
 #include <chrono>
@@ -70,25 +70,43 @@ void* sit(void* numArg)
 {
     int philosopherNum = *(int*)numArg;
 
-    // assigns left and right forks
-    int leftFork = philosopherNum;
-    int rightFork = (philosopherNum + 1) % numPhilosophers;
+    // assigns an alternating order to pick up forks
+    int fork1;
+    int fork2;
+    if (philosopherNum % 2 == 1)
+    {
+        fork1 = philosopherNum + 1;
+        fork2 = philosopherNum;
+    }
+    else
+    {
+        fork1 = philosopherNum;
+        fork2 = (philosopherNum + 1) % numPhilosophers;
+    }
 
     while (currItr < numIterations)
     {
-        // thinking while waiting for forks
-        while (forkInUse[leftFork] || forkInUse[rightFork])
+        // thinking while waiting for first fork
+        while (forkInUse[fork1])
         {
             // think
         }
 
-        // pick up forks
-        pthread_mutex_lock(&forks[leftFork]);
-        pthread_mutex_lock(&forks[rightFork]);
+        // pick up first fork
+        pthread_mutex_lock(&forks[fork1]);
+        forkInUse[fork1] = true;
+
+        // thinking while waiting for second fork
+        while (forkInUse[fork2])
+        {
+            // think
+        }
+
+        // pick up second fork
+        pthread_mutex_lock(&forks[fork2]);
+        forkInUse[fork2] = true;
 
         // eating with the forks
-        forkInUse[leftFork] = true;
-        forkInUse[rightFork] = true;
         philosophers[philosopherNum].isEating = true;
         usleep(philosophers[philosopherNum].timeToEat*10000); // Eat for assigned time
 
@@ -99,10 +117,10 @@ void* sit(void* numArg)
         }
 
         // put down forks
-        pthread_mutex_unlock(&forks[rightFork]);
-        pthread_mutex_unlock(&forks[leftFork]);
-        forkInUse[leftFork] = false;
-        forkInUse[rightFork] = false;
+        pthread_mutex_unlock(&forks[fork1]);
+        pthread_mutex_unlock(&forks[fork2]);
+        forkInUse[fork1] = false;
+        forkInUse[fork2] = false;
         philosophers[philosopherNum].isEating = false;
 
         // thinking

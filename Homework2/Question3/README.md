@@ -4,6 +4,7 @@ This folder contains the following files:
 3. Q3.cpp
 4. Graph.cpp
 5. Graph.h
+6. Q3.pdf
 
 Run the command "make" to generate the following executables:
 1. Q3
