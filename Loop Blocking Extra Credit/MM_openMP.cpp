@@ -10,9 +10,9 @@
 using namespace std;
 
 const int M = 512;
-const int M1 = 16;
+const int M1 = 64;
 const int B = 64;
-const int B1 = 4;
+const int B1 = 16;
 
 int main()
 {
@@ -216,11 +216,13 @@ int main()
     cout << "Time to execute large, single-threaded: " << run_time1 << " ns" << endl;
     cout << "Time to execute large, multi-threaded: " << run_time2 << " ns" << endl;
     cout << "Time to execute large, multi-threaded, with loop blocking: " << run_time3 << " ns" << endl;
-    cout << "Large matrix speedup: " << (double)run_time1/run_time3 << endl << endl;
+    cout << "Large matrix parallel speedup: " << (double)run_time1/run_time2 << endl;
+    cout << "Large matrix combined speedup: " << (double)run_time1/run_time3 << endl << endl;
     cout << "Time to execute small, single-threaded: " << run_time4 << " ns" << endl;
     cout << "Time to execute small, multi-threaded: " << run_time5 << " ns" << endl;
     cout << "Time to execute small, multi-threaded, with loop blocking: " << run_time6 << " ns" << endl;
-    cout << "Small matrix speedup: " << (double)run_time4/run_time6 << endl;
+    cout << "Small matrix parallel speedup: " << (double)run_time4/run_time5 << endl;
+    cout << "Small matrix combined speedup: " << (double)run_time4/run_time6 << endl;
 
     // free memory
     for(i=0;i<M;i++)
