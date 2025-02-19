@@ -1,6 +1,7 @@
 This folder contains the following files:
 1. README.md
 2. makefile
+3. ExtraCreditHomework1.pdf
 3. MM_openMP.cpp - small and large matrice example
 4. MM_block.cpp - example with blocking
 5. MM_no_block.cpp - serial example without blocking
