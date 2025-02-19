@@ -10,9 +10,9 @@
 using namespace std;
 
 const int M = 512;
-const int M1 = 64;
+const int M1 = 32;
 const int B = 64;
-const int B1 = 16;
+const int B1 = 8;
 
 int main()
 {
