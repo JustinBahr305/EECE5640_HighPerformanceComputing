@@ -10,7 +10,7 @@
 using namespace std;
 
 // defines the dimension N
-const int N = 512;
+const int N = 1024;
 
 void matrix_vector(const float (*A)[N], const float *x, float *y, int N)
 {
@@ -96,11 +96,13 @@ int main()
 
     cout << "Without AVX512:" << endl;
     cout << "y[" << N-1 << "] = " << y1[N-1] << endl;
-    cout << "Runtime in nanoseconds: " << run_time1 << endl;
+    cout << "Runtime in nanoseconds: " << run_time1 << endl << endl;
 
     cout << "With AVX512:" << endl;
     cout << "y[" << N-1 << "] = " << y2[N-1] << endl;
-    cout << "Runtime in nanoseconds: " << run_time2 << endl;
+    cout << "Runtime in nanoseconds: " << run_time2 << endl << endl;
+
+    cout << "AVX512 Speedup: " << float(run_time1) / run_time2 << endl;
 
     return 0;
 }
