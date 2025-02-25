@@ -16,7 +16,6 @@ const int B = 64;
 int main()
 {
     int i,j,k,l,kk,jj, num_zeros;
-    double start, finish;
 
     // dynamically allocates matrices
     double **a = new double*[N]; /* input matrix */
