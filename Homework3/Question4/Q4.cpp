@@ -15,17 +15,10 @@ int main()
 {
     int i,j,k,l;
 
-    // dynamically allocates matrices
-    double **a = new double*[N]; /* input matrix */
-    double **b = new double*[N]; /* input matrix */
-    double **c = new double*[N]; /* result matrix */
-
-    for (i = 0; i < N; i++)
-    {
-        a[i] = new double[N];
-        b[i] = new double[N];
-        c[i] = new double[N];
-    }
+    // creates matrices a, b, and c
+    double a[N][N];
+    double b[N][N];
+    double c[N][N];
 
     /* initialize a dense matrix */
     for(i=0; i<N; i++)
@@ -43,7 +36,8 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
-    // MM
+    // Perform matrix multiplication using cblas_sgemm
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, 1.0, A, k, B, n, 0.0, C, n);
 
     // stops the clock
     auto end_time = clock::now();

@@ -54,7 +54,7 @@ void matrix_vector_avx512f(const float (*A)[N], const float *x, float *y, int N)
 
 int main()
 {
-    // creates an NxN matrix A and N length vectors x and y
+    // creates NxN matrix A and N length vectors x and y
     float A[N][N];
     float x[N];
     float y1[N] = {0};

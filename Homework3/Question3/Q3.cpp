@@ -11,23 +11,16 @@ using namespace std;
 
 const int N = 512;
 const int LOOPS = 10;
-const int B = 64;
+const int B = 32;
 
 int main()
 {
     int i,j,k,l,kk,jj, num_zeros;
 
-    // dynamically allocates matrices
-    double **a = new double*[N]; /* input matrix */
-    double **b = new double*[N]; /* input matrix */
-    double **c = new double*[N]; /* result matrix */
-
-    for (i = 0; i < N; i++)
-    {
-        a[i] = new double[N];
-        b[i] = new double[N];
-        c[i] = new double[N];
-    }
+    // creates NxN matrices a, b, and c
+    double a[N][N]; /* input matrix */
+    double b[N][N]; /* input matrix */
+    double c[N][N]; /* result matrix */
 
     /* initialize a dense matrix */
     for(i=0; i<N; i++)
