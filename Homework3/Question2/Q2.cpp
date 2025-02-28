@@ -25,9 +25,6 @@ void matrix_vector_avx512f(const float (*A)[N], const float *x, float *y, int N)
     {
         size_t j = 0;
 
-        // creates an array to store the y values
-        float y_arr[16];
-
         __m512 y_vec, A_vec, x_vec;
         y_vec = _mm512_setzero_ps();
 
@@ -38,12 +35,7 @@ void matrix_vector_avx512f(const float (*A)[N], const float *x, float *y, int N)
             y_vec = _mm512_fmadd_ps(A_vec, x_vec, y_vec);
         }
 
-        _mm512_storeu_ps(y_arr, y_vec);
-
-        float y_sum = 0.0;
-
-        for (int k = 0; k < 16; k++)
-            y_sum += y_arr[k];
+        float y_sum = _mm512_reduce_add_ps(y_vec);
 
         for (; j < N; j++)
             y_sum += A[i][j] * x[j];

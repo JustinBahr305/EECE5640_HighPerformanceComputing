@@ -20,7 +20,6 @@ float dot_product(const float *vec1, const float *vec2, size_t size) {
 float dot_product_avx512f(const float *a, const float *b, size_t len) {
 
     size_t i = 0;
-    float sum_arr[16];
 
     __m512 sum_vec, a_vec, b_vec;
     
@@ -32,11 +31,7 @@ float dot_product_avx512f(const float *a, const float *b, size_t len) {
         sum_vec = _mm512_fmadd_ps(a_vec, b_vec, sum_vec);
     }
 
-    _mm512_storeu_ps(sum_arr, sum_vec);
-    float total_sum = 0.0f;
-    for (int j = 0; j < 16; j++) {
-        total_sum += sum_arr[j];
-    }
+    float total_sum = _mm512_reduce_add_ps(sum_vec);
 
     for (; i < len; i++) {
         total_sum += a[i] * b[i];
