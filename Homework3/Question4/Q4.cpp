@@ -16,18 +16,15 @@ int main()
     int i,j,k,l;
 
     // creates matrices a, b, and c
-    double a[N][N];
-    double b[N][N];
-    double c[N][N];
+    float A[N*N];
+    float B[N*N];
+    float C[N*N];
 
     /* initialize a dense matrix */
-    for(i=0; i<N; i++)
+    for(i=0; i<N*N; i++)
     {
-        for(j=0; j<N; j++)
-        {
-            a[i][j] = (double)(i+j);
-            b[i][j] = (double)(i-j);
-        }
+            A[i] = (float)(i+1);
+            B[i] = (float)(i+1);
     }
 
     // initialize the high resolution clock
@@ -37,7 +34,7 @@ int main()
     auto start_time = clock::now();
 
     // Perform matrix multiplication using cblas_sgemm
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, 1.0, A, k, B, n, 0.0, C, n);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, A, N, B, N, 0.0, C, N);
 
     // stops the clock
     auto end_time = clock::now();
@@ -46,7 +43,7 @@ int main()
     auto runtime = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
     // outputs dense results
-    cout << "A result: " << c[7][8] << endl; /* prevent dead code elimination */
+    cout << "A result: " << C[56] << endl; /* prevent dead code elimination */
     cout << "The total time for matrix multiplication: " << runtime << " nanoseconds" << endl;
 
     return 0;
