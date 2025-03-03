@@ -18,9 +18,16 @@ int main()
     int i,j,k,l,kk,jj, num_zeros;
 
     // creates NxN matrices a, b, and c
-    double a[N][N]; /* input matrix */
-    double b[N][N]; /* input matrix */
-    double c[N][N]; /* result matrix */
+    double** a = new double*[N];
+    double** b = new double*[N];
+    double** c = new double*[N];
+
+    for(i=0;i<N;i++)
+    {
+        a[i] = new double[N];
+        b[i] = new double[N];
+        c[i] = new double[N];
+    }
 
     /* initialize a dense matrix */
     for(i=0; i<N; i++)
@@ -66,8 +73,8 @@ int main()
     auto runtime = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
     // outputs dense results
-    cout << "A result: " << c[7][8] << endl; /* prevent dead code elimination */
-    cout << "The total time for matrix multiplication with dense matrices = " << runtime << " nanoseconds" << endl;
+    cout << "A dense result: " << c[7][8] << endl; /* prevent dead code elimination */
+    cout << "The total time for matrix multiplication with dense matrices = " << runtime << " nanoseconds" << endl << endl;
 
     /* initialize a sparse matrix */
     num_zeros = 0;
@@ -89,20 +96,66 @@ int main()
         }
     }
 
+    // clears matrix c
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            c[i][j] = 0.0;
+
     cout << "Starting sparse matrix multiply" << endl;
 
     // starts the clock
     start_time = clock::now();
 
+    // stores the number of non-zero values
+    int num_values = N*N - num_zeros;
+
+    // creates arrays for the non-zero values
+    double *a_values = new double[num_values];
+    double *b_values = new double[num_values];
+
+    // creates variable to track the indices of non-zero elements
+    int a_itr = 0;
+    int b_itr = 0;
+
+    // creates arrays for the row and column indices
+    int *a_rows = new int[num_values];
+    int *a_cols = new int[num_values];
+    int *b_rows = new int[num_values];
+    int *b_cols = new int[num_values];
+
+    // puts matrices a and b into CSR format
+    for(i=0; i<N; i++)
+    {
+        for(j=0; j<N; j++)
+        {
+            if (a[i][j] != 0.0)
+            {
+                a_values[a_itr] = a[i][j];
+                a_rows[a_itr] = i;
+                a_cols[a_itr] = j;
+                a_itr++;
+            }
+
+            if (b[i][j] != 0.0)
+            {
+                b_values[b_itr] = b[i][j];
+                b_rows[b_itr] = i;
+                b_cols[b_itr] = j;
+                b_itr++;
+            }
+        }
+    }
+
     for (l=0; l<LOOPS; l++)
     {
-        for(i=0; i<N; i++)
+        for(i=0; i<num_values; i++)
         {
-            for(j=0; j<N; j++)
+            for(j=0; j<num_values; j++)
             {
-                c[i][j] = 0.0;
-                for(k=0; k<N; k++)
-                    c[i][j] += a[i][k] * b[k][j];
+                if (a_cols[i] == b_rows[j])
+                {
+                    c[a_rows[i]][b_cols[j]] += a_values[i]*b_values[j];
+                }
             }
         }
     }
@@ -114,9 +167,26 @@ int main()
     runtime = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
     // outputs dense results
-    cout << "A result: " << c[7][8] << endl; /* prevent dead code elimination */
+    cout << "A sparse result: " << c[7][8] << endl; /* prevent dead code elimination */
     cout << "The total time for matrix multiplication with sparse matrices = " << runtime << endl;;
     cout << "The sparsity of the a and b matrices = " << (float)num_zeros/(float)(N*N) << endl;
+
+    // free memory
+    for(i=0;i<N;i++)
+    {
+        a[i] = nullptr;
+        b[i] = nullptr;
+        c[i] = nullptr;
+    }
+    a = nullptr;
+    b = nullptr;
+    c = nullptr;
+    a_values = nullptr;
+    b_values = nullptr;
+    a_rows = nullptr;
+    a_cols = nullptr;
+    b_rows = nullptr;
+    b_cols = nullptr;
 
     return 0;
 }
