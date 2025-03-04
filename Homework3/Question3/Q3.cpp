@@ -113,17 +113,19 @@ int main()
     double *a_values = new double[num_values];
     double *b_values = new double[num_values];
 
+    // creates arrays for the row and column indices
+    int *a_rows = new int[N+1];
+    int *a_cols = new int[num_values];
+    int *b_rows = new int[N+1];
+    int *b_cols = new int[num_values];
+
+    // sets first values to zero
+    a_rows[0] = 0;
+    b_rows[0] = 0;
+
     // creates variables to track the indices of non-zero elements
     int a_itr = 0;
-    int a_acc = 0;
     int b_itr = 0;
-    int b_acc = 0;
-
-    // creates arrays for the row and column indices
-    int *a_rows = new int[N];
-    int *a_cols = new int[num_values];
-    int *b_rows = new int[N];
-    int *b_cols = new int[num_values];
 
     // puts matrices a and bT into CSR format
     for(i=0; i<N; i++)
@@ -140,18 +142,17 @@ int main()
             if (b[j][i] != 0.0)
             {
                 b_values[b_itr] = b[j][i];
-                b_cols[b_itr] = i;
+                b_cols[b_itr] = j;
                 b_itr++;
             }
         }
-        a_rows[i] = a_acc;
-        b_rows[i] = b_acc;
-        a_acc = a_itr;
-        b_acc = b_itr;
+
+        a_rows[i+1] = a_itr;
+        b_rows[i+1] = b_itr;
     }
 
     // multiplies the matrices
-    for(i=0; i<N-1; i++)
+    for(i=0; i<N; i++)
     {
         for (j=a_rows[i]; j<a_rows[i+1]; j++)
         {
@@ -183,6 +184,23 @@ int main()
         val += a[1][i]*b[i][207];
     cout << val << endl;
 
+    // other check
+    for (l=0; l<LOOPS; l++)
+    {
+        // large matrix multiplication (multi-thread, with loop blocking)
+        #pragma omp parallel for private(i, j, jj, k, kk, sum)
+        for (kk=0; kk<N; kk+=B)
+            for (jj=0; jj<N; jj+=B)
+                for (i=0; i< N; i++)
+                    for (j = jj; j< jj + B; j++)
+                    {
+                        sum = c[i][j];
+                        for (k=kk; k< kk + B; k++)
+                            sum += a[i][k] * b[k][j];
+                        c[i][j] = sum;
+                    }
+    }
+    cout << "The sparse result: " << c[1][207] << endl;
 
     // free memory
     for(i=0;i<N;i++)
