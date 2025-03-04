@@ -96,11 +96,6 @@ int main()
         }
     }
 
-    // clears matrix c
-    for(i=0; i<N; i++)
-        for(j=0; j<N; j++)
-            c[i][j] = 0.0;
-
     cout << "Starting sparse matrix multiply" << endl;
 
     // starts the clock
@@ -151,19 +146,28 @@ int main()
         b_rows[i+1] = b_itr;
     }
 
-    // multiplies the matrices in parallel
-    #pragma omp parallel for private(i, j, k)
-    for(i=0; i<N; i++)
+    for (l=0; l<LOOPS; l++)
     {
-        for (j=a_rows[i]; j<a_rows[i+1]; j++)
+        // clears matrix c
+        #pragma omp parallel for private(i, j)
+        for(i=0; i<N; i++)
+            for(j=0; j<N; j++)
+                c[i][j] = 0.0;
+
+        // multiplies the matrices in parallel
+        #pragma omp parallel for private(i, j, k)
+        for(i=0; i<N; i++)
         {
-            int a_col = a_cols[j];
-            double a_val = a_values[j];
-            for (k=b_rows[a_col]; k<b_rows[a_col+1]; k++)
+            for (j=a_rows[i]; j<a_rows[i+1]; j++)
             {
-                int b_col = b_cols[k];
-                double b_val = b_values[k];
-                c[i][b_col] += a_val * b_val;
+                int a_col = a_cols[j];
+                double a_val = a_values[j];
+                for (k=b_rows[a_col]; k<b_rows[a_col+1]; k++)
+                {
+                    int b_col = b_cols[k];
+                    double b_val = b_values[k];
+                    c[i][b_col] += a_val * b_val;
+                }
             }
         }
     }
