@@ -57,7 +57,7 @@ int main()
     for (i=0; i<M; i++)
         for (j=0; j<M; j++)
             for (k=0; k<M; k++)
-                c[i][j] += + a[i][k] * b[k][j];
+                c[i][j] +=  a[i][k] * b[k][j];
 
     // stops the clock
     auto end_time = clock::now();

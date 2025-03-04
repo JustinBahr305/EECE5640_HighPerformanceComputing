@@ -113,17 +113,19 @@ int main()
     double *a_values = new double[num_values];
     double *b_values = new double[num_values];
 
-    // creates variable to track the indices of non-zero elements
+    // creates variables to track the indices of non-zero elements
     int a_itr = 0;
+    int a_acc = 0;
     int b_itr = 0;
+    int b_acc = 0;
 
     // creates arrays for the row and column indices
-    int *a_rows = new int[num_values];
+    int *a_rows = new int[N];
     int *a_cols = new int[num_values];
-    int *b_rows = new int[num_values];
+    int *b_rows = new int[N];
     int *b_cols = new int[num_values];
 
-    // puts matrices a and b into CSR format
+    // puts matrices a and bT into CSR format
     for(i=0; i<N; i++)
     {
         for(j=0; j<N; j++)
@@ -131,31 +133,35 @@ int main()
             if (a[i][j] != 0.0)
             {
                 a_values[a_itr] = a[i][j];
-                a_rows[a_itr] = i;
                 a_cols[a_itr] = j;
                 a_itr++;
             }
 
-            if (b[i][j] != 0.0)
+            if (b[j][i] != 0.0)
             {
-                b_values[b_itr] = b[i][j];
-                b_rows[b_itr] = i;
-                b_cols[b_itr] = j;
+                b_values[b_itr] = b[j][i];
+                b_cols[b_itr] = i;
                 b_itr++;
             }
         }
+        a_rows[i] = a_acc;
+        b_rows[i] = b_acc;
+        a_acc = a_itr;
+        b_acc = b_itr;
     }
 
-    for (l=0; l<LOOPS; l++)
+    // multiplies the matrices
+    for(i=0; i<N-1; i++)
     {
-        for(i=0; i<num_values; i++)
+        for (j=a_rows[i]; j<a_rows[i+1]; j++)
         {
-            for(j=0; j<num_values; j++)
+            int a_col = a_cols[j];
+            double a_val = a_values[j];
+            for (k=b_rows[a_col]; k<b_rows[a_col+1]; k++)
             {
-                if (a_cols[i] == b_rows[j])
-                {
-                    c[a_rows[i]][b_cols[j]] += a_values[i]*b_values[j];
-                }
+                int b_col = b_cols[k];
+                double b_val = b_values[k];
+                c[i][b_col] += a_val * b_val;
             }
         }
     }
@@ -167,9 +173,16 @@ int main()
     runtime = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
     // outputs dense results
-    cout << "A sparse result: " << c[7][8] << endl; /* prevent dead code elimination */
-    cout << "The total time for matrix multiplication with sparse matrices = " << runtime << endl;;
+    cout << "A sparse result: " << c[1][207] << endl; /* prevent dead code elimination */
+    cout << "The total time for matrix multiplication with sparse matrices = " << runtime << endl;
     cout << "The sparsity of the a and b matrices = " << (float)num_zeros/(float)(N*N) << endl;
+
+    // check
+    int val = 0;
+    for (i = 0; i < N; i++)
+        val += a[1][i]*b[i][207];
+    cout << val << endl;
+
 
     // free memory
     for(i=0;i<N;i++)
