@@ -127,7 +127,7 @@ int main()
     int a_itr = 0;
     int b_itr = 0;
 
-    // puts matrices a and bT into CSR format
+    // puts matrices a and b into CSR format
     for(i=0; i<N; i++)
     {
         for(j=0; j<N; j++)
@@ -139,9 +139,9 @@ int main()
                 a_itr++;
             }
 
-            if (b[j][i] != 0.0)
+            if (b[i][j] != 0.0)
             {
-                b_values[b_itr] = b[j][i];
+                b_values[b_itr] = b[i][j];
                 b_cols[b_itr] = j;
                 b_itr++;
             }
@@ -151,7 +151,8 @@ int main()
         b_rows[i+1] = b_itr;
     }
 
-    // multiplies the matrices
+    // multiplies the matrices in parallel
+    #pragma omp parallel for private(i, j, k)
     for(i=0; i<N; i++)
     {
         for (j=a_rows[i]; j<a_rows[i+1]; j++)
@@ -173,34 +174,16 @@ int main()
     // casts run_time in nanoseconds
     runtime = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
+    // verifies result
+    double verify = 0.0;
+    for(i=0; i<N; i++)
+        verify += a[1][i] * b[i][207];
+
     // outputs dense results
     cout << "A sparse result: " << c[1][207] << endl; /* prevent dead code elimination */
+    cout << "Verified result: " << verify << endl;
     cout << "The total time for matrix multiplication with sparse matrices = " << runtime << endl;
     cout << "The sparsity of the a and b matrices = " << (float)num_zeros/(float)(N*N) << endl;
-
-    // check
-    int val = 0;
-    for (i = 0; i < N; i++)
-        val += a[1][i]*b[i][207];
-    cout << val << endl;
-
-    // other check
-    for (l=0; l<LOOPS; l++)
-    {
-        // large matrix multiplication (multi-thread, with loop blocking)
-        #pragma omp parallel for private(i, j, jj, k, kk, sum)
-        for (kk=0; kk<N; kk+=B)
-            for (jj=0; jj<N; jj+=B)
-                for (i=0; i< N; i++)
-                    for (j = jj; j< jj + B; j++)
-                    {
-                        sum = c[i][j];
-                        for (k=kk; k< kk + B; k++)
-                            sum += a[i][k] * b[k][j];
-                        c[i][j] = sum;
-                    }
-    }
-    cout << "The sparse result: " << c[1][207] << endl;
 
     // free memory
     for(i=0;i<N;i++)
