@@ -67,33 +67,33 @@ int main()
     // prints single precision results
     cout << fixed << setprecision(27);
     cout << "Single Precision Floating Point Calculations:" << endl;
-    cout << "sin(0.05): " << sin_05f << endl;
-    cout << "sin(0.5): " << sin_5f << endl;
-    cout << "sin(1): " << sin1f << endl;
-    cout << "sin(1.5): " << sin1_5f << endl << endl;
+    cout << "sin(0.05) = " << sin_05f << endl;
+    cout << "sin(0.5) = " << sin_5f << endl;
+    cout << "sin(1) = " << sin1f << endl;
+    cout << "sin(1.5) = " << sin1_5f << endl << endl;
 
     // prints double precision results
     cout << fixed << setprecision(57);
     cout << "Double Precision Floating Point Calculations:" << endl;
-    cout << "sin(0.05): " << sin_05d << endl;
-    cout << "sin(0.5): " << sin_5d << endl;
-    cout << "sin(1): " << sin1d << endl;
-    cout << "sin(1.5): " << sin1_5d << endl << endl;
+    cout << "sin(0.05) = " << sin_05d << endl;
+    cout << "sin(0.5) = " << sin_5d << endl;
+    cout << "sin(1) = " << sin1d << endl;
+    cout << "sin(1.5) = " << sin1_5d << endl << endl;
 
     // prints single precision errors
     cout << scientific<< setprecision(3);
     cout << "|Single Precision Error|:" << endl;
-    cout << "0.05: " << abs(sin_05f - sin_05) << endl;
-    cout << "0.5: " << abs(sin_5f - sin_5) << endl;
-    cout << "1: " << abs(sin1f - sin1) << endl;
-    cout << "1.5: " << abs(sin1_5f - sin1_5) << endl << endl;
+    cout << "sin(0.05): " << abs(sin_05f - sin_05) << endl;
+    cout << "sin(0.5): " << abs(sin_5f - sin_5) << endl;
+    cout << "sin(1): " << abs(sin1f - sin1) << endl;
+    cout << "sin(1.5): " << abs(sin1_5f - sin1_5) << endl << endl;
 
     // prints double precision errors
     cout << "|Double Precision Error|:" << endl;
-    cout << "0.05: " << abs(sin_05d - sin_05) << endl;
-    cout << "0.5: " << abs(sin_5d - sin_5) << endl;
-    cout << "1: " << abs(sin1d - sin1) << endl;
-    cout << "1.5: " << abs(sin1_5d - sin1_5) << endl;
+    cout << "sin(0.05): " << abs(sin_05d - sin_05) << endl;
+    cout << "sin(0.5): " << abs(sin_5d - sin_5) << endl;
+    cout << "sin(1): " << abs(sin1d - sin1) << endl;
+    cout << "sin(1.5): " << abs(sin1_5d - sin1_5) << endl;
 
     return 0;
 }
