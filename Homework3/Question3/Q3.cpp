@@ -50,11 +50,13 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
+    // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
     {
         // large matrix multiplication (multi-thread, with loop blocking)
         #pragma omp parallel for private(i, j, jj, k, kk, sum)
         for (kk=0; kk<N; kk+=B)
+        {
             for (jj=0; jj<N; jj+=B)
                 for (i=0; i< N; i++)
                     for (j = jj; j< jj + B; j++)
@@ -64,6 +66,11 @@ int main()
                             sum += a[i][k] * b[k][j];
                         c[i][j] = sum;
                     }
+
+            if (kk >= N-B-2)
+                cout << "NumThreads: " << omp_get_num_threads() << endl;
+        }
+        // end parallel region
     }
 
     // stops the clock
@@ -72,11 +79,17 @@ int main()
     // casts run_time in nanoseconds
     auto runtime = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
+    // verifies result
+    double verify = 0.0;
+    for(i=0; i<N; i++)
+        verify += a[7][i] * b[i][8];
+
     // outputs dense results
-    cout << "A dense result: " << c[7][8] << endl; /* prevent dead code elimination */
+    cout << "A dense result: " << c[7][8] << endl;
+    cout << "Verified result: " << verify << endl;
     cout << "The total time for matrix multiplication with dense matrices = " << runtime << " nanoseconds" << endl << endl;
 
-    /* initialize a sparse matrix */
+    // initializes a sparse matrix
     num_zeros = 0;
     for(i=0; i<N; i++)
     {
@@ -146,6 +159,7 @@ int main()
         b_rows[i+1] = b_itr;
     }
 
+    // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
     {
         // clears matrix c
@@ -153,6 +167,7 @@ int main()
         for(i=0; i<N; i++)
             for(j=0; j<N; j++)
                 c[i][j] = 0.0;
+        // end parallel region
 
         // multiplies the matrices in parallel
         #pragma omp parallel for private(i, j, k)
@@ -169,7 +184,7 @@ int main()
                     c[i][b_col] += a_val * b_val;
                 }
             }
-        }
+        } // end parallel region
     }
 
     // stops the clock
@@ -179,12 +194,12 @@ int main()
     runtime = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
     // verifies result
-    double verify = 0.0;
+    verify = 0.0;
     for(i=0; i<N; i++)
         verify += a[1][i] * b[i][207];
 
     // outputs dense results
-    cout << "A sparse result: " << c[1][207] << endl; /* prevent dead code elimination */
+    cout << "A sparse result: " << c[1][207] << endl;
     cout << "Verified result: " << verify << endl;
     cout << "The total time for matrix multiplication with sparse matrices = " << runtime << endl;
     cout << "The sparsity of the a and b matrices = " << (float)num_zeros/(float)(N*N) << endl;
