@@ -59,13 +59,14 @@ int main()
     for (l=0; l<LOOPS; l++)
     {
         // large matrix multiplication (multi-thread, with loop blocking)
+        #pragma omp parallel for private(i, j, jj, k, kk, sum)
         for (kk=0; kk<N; kk+=B)
         {
             for (jj=0; jj<N; jj+=B)
                 for (i=0; i<N; i++)
-                    #pragma omp parallel for private(i, j, k, sum)
                     for (j = jj; j< jj + B; j++)
                     {
+                        c[i][j] = 0;
                         sum = c[i][j];
                         for (k=kk; k< kk + B; k++)
                             sum += a[i][k] * b[k][j];
@@ -203,7 +204,7 @@ int main()
     // outputs dense results
     cout << "A sparse result: " << c[1][207] << endl;
     cout << "Verified result: " << verify << endl;
-    cout << "The total time for matrix multiplication with sparse matrices = " << runtime << endl;
+    cout << "The total time for matrix multiplication with sparse matrices = " << runtime << " nanoseconds" << endl;
     cout << "The sparsity of the a and b matrices = " << (float)num_zeros/(float)(N*N) << endl;
 
     // free memory
