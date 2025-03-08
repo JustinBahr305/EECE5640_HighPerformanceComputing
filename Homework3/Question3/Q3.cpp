@@ -61,7 +61,6 @@ int main()
         // large matrix multiplication (multi-thread, with loop blocking)
         for (kk=0; kk<N; kk+=B)
         {
-            cout << "ThreadNum: " << omp_get_thread_num() << endl;
             for (jj=0; jj<N; jj+=B)
                 #pragma omp parallel for private(i, j, k, sum)
                 for (i=0; i< N; i++)
@@ -72,8 +71,7 @@ int main()
                             sum += a[i][k] * b[k][j];
                         c[i][j] = sum;
                     }
-        }
-        // end parallel region
+        } // end parallel region
     }
 
     // stops the clock
@@ -179,7 +177,6 @@ int main()
         #pragma omp parallel for private(i, j, k)
         for(i=0; i<N; i++)
         {
-            cout << "ThreadNum: " << omp_get_thread_num() << endl;
             for (j=a_rows[i]; j<a_rows[i+1]; j++)
             {
                 int a_col = a_cols[j];
