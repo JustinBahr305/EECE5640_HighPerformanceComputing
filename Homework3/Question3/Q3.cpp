@@ -44,7 +44,7 @@ int main()
     cout << "Starting dense matrix multiply" << endl;
 
     // declares temporary variable sum for loop blocking
-    int sum;
+    double sum;
 
     // initialize the high resolution clock
     typedef chrono::high_resolution_clock clock;;
@@ -59,11 +59,11 @@ int main()
     for (l=0; l<LOOPS; l++)
     {
         // large matrix multiplication (multi-thread, with loop blocking)
+        #pragma omp parallel for private(i, j, jj, k, kk, sum)
         for (kk=0; kk<N; kk+=B)
         {
             for (jj=0; jj<N; jj+=B)
-                #pragma omp parallel for private(i, j, k, sum)
-                for (i=0; i< N; i++)
+                for (i=ii; i<N; i++)
                     for (j = jj; j< jj + B; j++)
                     {
                         sum = c[i][j];
