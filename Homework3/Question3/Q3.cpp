@@ -53,7 +53,7 @@ int main()
     auto start_time = clock::now();
 
     // set the number of threads for dense multiplication
-    #pragma omp parallel set_num_threads(numThreadsDense)
+    #pragma omp set_num_threads(numThreadsDense)
 
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
@@ -165,7 +165,7 @@ int main()
     }
 
     // sets the number of threads for sparse multiplication
-    #pragma omp parallel set_num_threads(numThreadsSparse)
+    #pragma omp set_num_threads(numThreadsSparse)
 
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
