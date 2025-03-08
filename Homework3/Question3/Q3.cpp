@@ -52,9 +52,6 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
-    // set the number of threads for dense multiplication
-    #pragma omp set_num_threads(numThreadsDense)
-
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<10; l++)
     {
@@ -71,7 +68,7 @@ int main()
         } // end parallel region
 
         // large matrix multiplication (multi-thread, with loop blocking)
-        #pragma omp parallel for private(i, j, jj, k, kk, sum)
+        #pragma omp parallel for private(i, j, jj, k, kk, sum) num_threads(numThreadsDense)
         for (kk=0; kk<N; kk+=B)
         {
             for (jj=0; jj<N; jj+=B)
@@ -173,14 +170,11 @@ int main()
         b_rows[i+1] = b_itr;
     }
 
-    // sets the number of threads for sparse multiplication
-    #pragma omp set_num_threads(numThreadsSparse)
-
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
     {
         // multiplies the matrices in parallel
-        #pragma omp parallel for private(i, j, k)
+        #pragma omp parallel for private(i, j, k) num_threads(numThreadsSparse)
         for(i=0; i<N; i++)
         {
             // clears row of matrix c
