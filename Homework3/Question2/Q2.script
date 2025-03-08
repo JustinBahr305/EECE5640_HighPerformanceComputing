@@ -1,13 +1,14 @@
 #!/bin/bash
 #!/bin/bash
-#SBATCH -J HW3_Q2_JustinBahr # Job name
+#SBATCH -J HW3_Q2_JustinBahr
 #SBATCH -N 1 # Number of nodes
 #SBATCH -n 1 # Number of tasks
-#SBATCH -o output.txt # Standard output file
-#SBATCH -e error.txt # Standard error file
 #SBATCH --constraint=cascadelake
+#SBATCH --exclusive
+#SBATCH -o output.txt
+#SBATCH -e error.txt
 
-# Your program/command here
+# Program/command
 make
 ./Q2
 make clean
