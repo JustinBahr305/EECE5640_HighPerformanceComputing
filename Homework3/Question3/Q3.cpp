@@ -166,17 +166,15 @@ int main()
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
     {
-        // clears matrix c
-        #pragma omp parallel for private(i, j)
-        for(i=0; i<N; i++)
-            for(j=0; j<N; j++)
-                c[i][j] = 0.0;
-        // end parallel region
-
         // multiplies the matrices in parallel
         #pragma omp parallel for private(i, j, k)
         for(i=0; i<N; i++)
         {
+            // clears row of matrix c
+            for(j=0; j<N; j++)
+                c[i][j] = 0.0;
+
+            // multiplies nonzeros
             for (j=a_rows[i]; j<a_rows[i+1]; j++)
             {
                 int a_col = a_cols[j];
