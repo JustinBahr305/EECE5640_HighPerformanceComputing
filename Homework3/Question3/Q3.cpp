@@ -192,6 +192,8 @@ int main()
                     c[i][b_col] += a_val * b_val;
                 }
             }
+            if (i == N-1)
+                cout << "NumThreads: " << omp_get_num_threads() << endl;
         } // end parallel region
     }
 
