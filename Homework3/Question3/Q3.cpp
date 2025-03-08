@@ -62,6 +62,7 @@ int main()
         #pragma omp parallel for private(i, j, jj, k, kk, sum)
         for (kk=0; kk<N; kk+=B)
         {
+            cout << "ThreadNum: " << omp_get_thread_num() << endl;
             for (jj=0; jj<N; jj+=B)
                 for (i=0; i< N; i++)
                     for (j = jj; j< jj + B; j++)
@@ -71,9 +72,6 @@ int main()
                             sum += a[i][k] * b[k][j];
                         c[i][j] = sum;
                     }
-
-            if (kk >= N-B-1)
-                cout << "ThreadNum: " << omp_get_thread_num() << endl;
         }
         // end parallel region
     }
@@ -181,6 +179,7 @@ int main()
         #pragma omp parallel for private(i, j, k)
         for(i=0; i<N; i++)
         {
+            cout << "ThreadNum: " << omp_get_thread_num() << endl;
             for (j=a_rows[i]; j<a_rows[i+1]; j++)
             {
                 int a_col = a_cols[j];
@@ -192,8 +191,6 @@ int main()
                     c[i][b_col] += a_val * b_val;
                 }
             }
-            if (i == N-1)
-                cout << "ThreadNum: " << omp_get_thread_num() << endl;
         } // end parallel region
     }
 
