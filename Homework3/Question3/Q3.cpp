@@ -73,7 +73,7 @@ int main()
                     }
 
             if (kk >= N-B-1)
-                cout << "NumThreads: " << omp_get_num_threads() << endl;
+                cout << "ThreadNum: " << omp_get_thread_num() << endl;
         }
         // end parallel region
     }
@@ -193,7 +193,7 @@ int main()
                 }
             }
             if (i == N-1)
-                cout << "ThreadsNum: " << omp_get_thread_num() << endl;
+                cout << "ThreadNum: " << omp_get_thread_num() << endl;
         } // end parallel region
     }
 
