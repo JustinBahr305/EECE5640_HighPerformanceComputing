@@ -12,6 +12,8 @@ using namespace std;
 const int N = 512;
 const int LOOPS = 10;
 const int B = 32;
+const int numThreadsDense = 64;
+const int numThreadsSparse = 64;
 
 int main()
 {
@@ -49,6 +51,9 @@ int main()
 
     // starts the clock
     auto start_time = clock::now();
+
+    // set the number of threads for dense multiplication
+    #pragma omp parallel set_num_threads(numThreadsDense)
 
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
@@ -158,6 +163,9 @@ int main()
         a_rows[i+1] = a_itr;
         b_rows[i+1] = b_itr;
     }
+
+    // sets the number of threads for sparse multiplication
+    #pragma omp parallel set_num_threads(numThreadsSparse)
 
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<LOOPS; l++)
