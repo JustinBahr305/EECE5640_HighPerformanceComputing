@@ -108,10 +108,11 @@ int main()
             for (i=0; i< M; i++)
                 for (j = jj; j< jj + B; j++)
                 {
-                    sum = c[i][j];
+                    sum = 0.0;
                     for (k=kk; k< kk + B; k++)
                         sum += a[i][k] * b[k][j];
-                    c[i][j] = sum;
+                    #pragma omp atomic
+                    c[i][j] += sum;
                 }
 
     // stops the clock
