@@ -56,7 +56,7 @@ int main()
     #pragma omp set_num_threads(numThreadsDense)
 
     // performs 10 iterations of matrix-matrix multiplication
-    for (l=0; l<LOOPS; l++)
+    for (l=0; l<1; l++)
     {
         // large matrix multiplication (multi-thread, with loop blocking)
         #pragma omp parallel for private(i, j, jj, k, kk, sum)
@@ -64,11 +64,10 @@ int main()
         {
             for (jj=0; jj<N; jj+=B)
                 for (i=0; i<N; i++)
-                    for (j = jj; j< jj + B; j++)
+                    for (j = jj; j<jj + B; j++)
                     {
-                        c[i][j] = 0;
                         sum = c[i][j];
-                        for (k=kk; k< kk + B; k++)
+                        for (k=kk; k<kk + B; k++)
                             sum += a[i][k] * b[k][j];
                         c[i][j] = sum;
                     }
