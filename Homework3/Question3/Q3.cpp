@@ -72,7 +72,7 @@ int main()
                         c[i][j] = sum;
                     }
 
-            if (kk >= N-B-2)
+            if (kk >= N-B-1)
                 cout << "NumThreads: " << omp_get_num_threads() << endl;
         }
         // end parallel region
@@ -193,7 +193,7 @@ int main()
                 }
             }
             if (i == N-1)
-                cout << "NumThreads: " << omp_get_num_threads() << endl;
+                cout << "ThreadsNum: " << omp_get_thread_num() << endl;
         } // end parallel region
     }
 
