@@ -12,8 +12,6 @@ using namespace std;
 const int N = 512;
 const int LOOPS = 10;
 const int B = 32;
-const int numThreadsDense = 64;
-const int numThreadsSparse = 64;
 
 int main()
 {
@@ -68,7 +66,7 @@ int main()
         } // end parallel region
 
         // large matrix multiplication (multi-thread, with loop blocking)
-        #pragma omp parallel for private(i, j, jj, k, kk, sum) num_threads(numThreadsDense)
+        #pragma omp parallel for private(i, j, jj, k, kk, sum)
         for (kk=0; kk<N; kk+=B)
         {
             for (jj=0; jj<N; jj+=B)
@@ -174,7 +172,7 @@ int main()
     for (l=0; l<LOOPS; l++)
     {
         // multiplies the matrices in parallel
-        #pragma omp parallel for private(i, j, k) num_threads(numThreadsSparse)
+        #pragma omp parallel for private(i, j, k)
         for(i=0; i<N; i++)
         {
             // clears row of matrix c
