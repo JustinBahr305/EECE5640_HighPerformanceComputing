@@ -11,6 +11,7 @@ using namespace std;
 
 const int B = 64;
 
+// function to replicate dense matrix-matrix multiplication from question 3
 void denseMultiply(const float a[], const float b[], float d[], int N)
 {
     // declares temporary variable sum for loop blocking
@@ -48,7 +49,7 @@ int main()
     float A[N*N];
     float B[N*N];
     float C[N*N];
-    float D[N*N] ={0};
+    float D[N*N] = {0};
 
     /* initialize a dense matrix */
     for(i=0; i<N*N; i++)
@@ -87,7 +88,7 @@ int main()
     // verifies result
     float verify = 0.0;
     for(i=0; i<N; i++)
-        verify += A[N]*B[N*i+56];
+        verify += A[i]*B[N*i+56];
 
     // outputs a result
     cout << "An OpenBLAS result: " << C[56] << endl;

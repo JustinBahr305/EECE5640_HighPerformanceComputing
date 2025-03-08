@@ -4,7 +4,6 @@
 #SBATCH -N 1 # Number of nodes
 #SBATCH -n 1 # Number of tasks
 #SBATCH --partition=courses
-#SBATCH --constraint=cascadelake
 #SBATCH --exclusive
 #SBATCH -o output.txt
 #SBATCH -e error.txt
@@ -12,6 +11,7 @@
 # Program/command
 echo Node:
 hostname
+module load OpenBLAS/0.3.29
 make
-./Q2
+./Q4
 make clean
