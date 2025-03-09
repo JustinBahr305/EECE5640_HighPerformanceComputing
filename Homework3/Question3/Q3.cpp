@@ -96,6 +96,13 @@ int main()
         } // end parallel region
     }
 
+    // free memory for bT
+    for(i=0;i<N;i++)
+    {
+        bT[i] = nullptr;
+    }
+    bT = nullptr;
+
     // stops the clock
     auto end_time = clock::now();
 
