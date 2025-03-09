@@ -50,6 +50,18 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
+    // creates a transposed version of b for cache efficiency
+    double** bT = new double*[N];
+    #pragma omp parallel for private(i)
+    for(i=0;i<N;i++)
+        bT[i] = new double[N];
+
+    // transposes matrix b
+    #pragma omp parallel for collapse(2) private(i,j)
+    for (i = 0; i < N; i++)
+        for (j = 0; j < N; j++)
+            bT[j][i] = b[i][j];
+
     // performs 10 iterations of matrix-matrix multiplication
     for (l=0; l<10; l++)
     {
@@ -65,20 +77,22 @@ int main()
                     }
         } // end parallel region
 
-        // large matrix multiplication (multi-thread, with loop blocking)
-        #pragma omp parallel for private(i, j, jj, k, kk, sum)
-        for (kk=0; kk<N; kk+=B)
+        // matrix multiplication (multi-thread, with loop blocking)
+        #pragma omp parallel private(i, j, jj, k, kk, sum)
         {
-            for (jj=0; jj<N; jj+=B)
-                for (i=0; i<N; i++)
-                    for (j = jj; j<jj + B; j++)
-                    {
-                        sum = 0.0;
-                        for (k=kk; k<kk + B; k++)
-                            sum += a[i][k] * b[k][j];
-                        #pragma omp atomic
-                        c[i][j] += sum;
-                    }
+            #pragma omp parallel for collapse(2)
+            for (kk=0; kk<N; kk+=B)
+            {
+                for (jj=0; jj<N; jj+=B)
+                    for (i=0; i<N; i++)
+                        for (j = jj; j<jj + B; j++)
+                        {
+                            sum = 0.0;
+                            for (k=kk; k<kk + B; k++)
+                                sum += a[i][k] * bT[j][k];
+                            c[i][j] += sum;
+                        }
+            }
         } // end parallel region
     }
 
