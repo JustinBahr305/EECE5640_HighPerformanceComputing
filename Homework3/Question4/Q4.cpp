@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <x86intrin.h>
 #include <cblas.h>
 
 using namespace std;

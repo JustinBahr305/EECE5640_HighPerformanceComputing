@@ -12,6 +12,7 @@ Run the command "make" to generate the following executable and assembly listing
 
 Run the command "make clean" to delete the executable and assembly listing.
 
+
 Q2 should only be run on the Explorer Cluster on a node with AVX512 support.
 
 Run the command following command to obtain and interactive CPU-based node with AVX512 support: 
