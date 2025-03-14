@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     // initializes MPI
     MPI_Init(&argc, &argv);
 
-    // creates variables for the rank of each process, total number of processes, and an interger to increment
+    // creates variables for the rank of each process, total number of processes, and an integer to increment
     int rank, size, i;
 
     // stores the rank of each process and the number of processes
