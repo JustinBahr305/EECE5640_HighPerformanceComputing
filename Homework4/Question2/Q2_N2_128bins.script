@@ -7,7 +7,7 @@
 #SBATCH --job-name=HW4_Q2_JustinBahr
 #SBATCH --mem=100G
 #SBATCH --partition=courses
-#SBATCH --mincpus=64
+#SBATCH --oversubscribe
 
 # Program/command
 module load OpenMPI/4.1.6

@@ -1,6 +1,6 @@
 All: Q2
 
-Q1:
+Q2:
 	mpiCC -o Q2 Q2.cpp
 
 clean:

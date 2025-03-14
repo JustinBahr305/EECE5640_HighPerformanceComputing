@@ -36,7 +36,11 @@ int main(int argc, char *argv[])
     int processSlice = DATA_SIZE / size;
     int *localData = new int[processSlice];
 
+    // creates an array for the local histogram
     int localHist[size] = {0};
+
+    // initialize the high resolution clock
+    typedef chrono::high_resolution_clock clock;;
 
     // the first process generates the random numbers and distributes them to all processes
     if (rank == 0)
@@ -58,6 +62,9 @@ int main(int argc, char *argv[])
         }
     }
 
+    // starts the clock
+    auto start_time = clock::now();
+
     // scatters the data to all processes
     MPI_Scatter(data, processSlice, MPI_INT, localData, processSlice, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -73,11 +80,21 @@ int main(int argc, char *argv[])
     // first process prints the resulting histogram
     if (rank == 0)
     {
-        cout << "Resulting Histogram:" << endl;
+        // stops the clock
+        auto end_time = clock::now();
+
+        // casts run_time in nanoseconds
+        auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+
+        cout << endl << "Resulting Histogram:" << endl;
         for (int i = 0; i < size; i++)
         {
             cout << "Bin " << i + 1 << ": " << globalHist[i] << endl;
         }
+
+        // prints the runtime
+        cout << endl << "Runtime in nanoseconds: " << run_time << endl;
+
         delete[] data;
     }
 

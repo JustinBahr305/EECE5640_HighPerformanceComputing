@@ -24,15 +24,15 @@ int main(int argc, char *argv[])
     if (rank == 0)
     {
         i = 1;
-        cout << "Incrementing ..." << endl;
-        cout << "Process " << rank + 1 << ": " << i << endl; // rank + 1 since the first process is rank 0
+        cout << endl << "Incrementing ..." << endl;
+        cout << "Process " << rank + 1 << ": " << i << endl << flush; // rank + 1 since the first process is rank 0
         i++;
         MPI_Send(&i, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
     }
     else
     {
         MPI_Recv(&i, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        cout << "Process " << rank + 1 << ": " << i << endl; // rank + 1 since the first process is rank 0
+        cout << "Process " << rank + 1 << ": " << i << endl << flush; // rank + 1 since the first process is rank 0
         if (rank < size-1)
         {
             i++;
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            cout << endl << "Decrementing ..." << endl;
+            cout << endl << "Decrementing ..." << endl << flush;
             i-=2;
             MPI_Send(&i, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
         }
@@ -50,14 +50,14 @@ int main(int argc, char *argv[])
     if (rank == 0)
     {
         MPI_Recv(&i, 1, MPI_INT, size - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        cout << "Process " << rank + 1 << ": " << i << endl; // rank + 1 since the first process is rank 0
+        cout << "Process " << rank + 1 << ": " << i << endl << flush; // rank + 1 since the first process is rank 0
         i-=2;
         MPI_Send(&i, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
     }
     else if (rank < size / 2)
     {
         MPI_Recv(&i, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        cout << "Process " << rank + 1 << ": " << i << endl; // rank + 1 since the first process is rank 0
+        cout << "Process " << rank + 1 << ": " << i << endl << flush; // rank + 1 since the first process is rank 0
         if (rank < size/2 - 1)
         {
             i-=2;
