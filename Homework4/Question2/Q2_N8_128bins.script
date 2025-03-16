@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --verbose
-#SBATCH --nodes=4
-#SBATCH --ntasks-per-node=8
+#SBATCH --nodes=8
+#SBATCH --ntasks-per-node=16
 #SBATCH --cpus-per-task=1
 #SBATCH --time=00:30:00
 #SBATCH --job-name=HW4_Q2_JustinBahr
@@ -11,5 +11,5 @@
 # Program/command
 module load OpenMPI/4.1.6
 make
-mpirun -mca btl_bas:wq:quUie_warn_component_unused 0 Q2_32bins
+mpirun -mca btl_bas:wq:quUie_warn_component_unused 0 Q2_128bins
 make clean

@@ -1,4 +1,4 @@
-// Q2
+// Q2_128bins
 // Created by Justin Bahr on 3/11/2025.
 // EECE 5640 - High Performance Computing
 // MPI Parallel Histogramming
@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 {
     const int MAX = 100000;
     const int DATA_SIZE = 8000000;
+    const int NUM_BINS = 128;
 
     // initializes MPI
     MPI_Init(&argc, &argv);
@@ -30,14 +31,14 @@ int main(int argc, char *argv[])
     int *data = nullptr;
 
     // creates an array for the global histogram
-    int globalHist[size] = {0};
+    int globalHist[NUM_BINS] = {0};
 
     // computes the slice size for each process and creates an array to store the processes slice
     int processSlice = DATA_SIZE / size;
     int *localData = new int[processSlice];
 
     // creates an array for the local histogram
-    int localHist[size] = {0};
+    int localHist[NUM_BINS] = {0};
 
     // initialize the high resolution clock
     typedef chrono::high_resolution_clock clock;;
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
     // each process histograms its slice
     for (int i = 0; i < processSlice; i++)
     {
-        localHist[(localData[i] - 1) * size / MAX]++;
+        localHist[(localData[i] - 1) * NUM_BINS / MAX]++;
     }
 
     // reduces local histograms into global histogram in the first process
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
         auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
         cout << endl << "Resulting Histogram:" << endl;
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < NUM_BINS; i++)
         {
             cout << "Bin " << i + 1 << ": " << globalHist[i] << endl;
         }

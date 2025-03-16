@@ -1,13 +1,12 @@
 #!/bin/bash
 #SBATCH --verbose
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=32
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=16
 #SBATCH --cpus-per-task=1
 #SBATCH --time=00:30:00
 #SBATCH --job-name=HW4_Q1_JustinBahr
 #SBATCH --mem=100G
 #SBATCH --partition=courses
-#SBATCH --oversubscribe
 
 # Program/command
 module load OpenMPI/4.1.6

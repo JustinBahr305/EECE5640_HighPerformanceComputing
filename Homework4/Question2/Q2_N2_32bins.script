@@ -7,10 +7,9 @@
 #SBATCH --job-name=HW4_Q2_JustinBahr
 #SBATCH --mem=100G
 #SBATCH --partition=courses
-#SBATCH --mincpus=16
 
 # Program/command
 module load OpenMPI/4.1.6
 make
-mpirun -mca btl_bas:wq:quUie_warn_component_unused 0 Q2
+mpirun -mca btl_bas:wq:quUie_warn_component_unused 0 Q2_32bins
 make clean
