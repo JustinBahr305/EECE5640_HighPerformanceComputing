@@ -1,14 +1,14 @@
-// fft
-// Created by justb on 3/14/2025.
+// fir
+// Created by Justin Bahr on 3/14/2025.
 // EECE 5640 - High Performance Computing
-// Radix-2 Fast Fourier Transform
+// High Order Low Pass FIR Filter
 
 #include <iostream>
 #include <chrono>
 #include <cmath>
-#include <complex>
 #include <fstream>
 #include <string>
+#include <iomanip>
 #include <omp.h>
 
 using namespace std;
@@ -46,54 +46,9 @@ int getFileSize(FILE *inFile)
     return fileSize;
 }
 
-void FIR_lowpass(int16_t input[], int16_t output[], int signalLength,const double coefficients[], int order)
+// function to print the WAV header
+void printWAVHeader(WAV_HEADER &wavHeader, int filelength)
 {
-    for (int i = signalLength-1; i >= 0; i--)
-    {
-        double temp = 0.0;
-        for (int j = 0; j < min(order,i+1); j++)
-        {
-            temp += coefficients[j] * input[i-j];
-        }
-        output[i] = (int16_t)(temp);
-    }
-}
-
-int main()
-{
-    const int ORDER = 3;
-
-    // creates a wav header
-    wav_hdr wavHeader;
-
-    // creates a file to read and write into
-    FILE *wavFile;
-
-    // creates variables to hold the header size and file length
-    int headerSize = sizeof(wav_hdr);
-    int filelength;
-
-    // opens the WAV file
-    wavFile = fopen("C:/Users/justb/EECE5640_HighPerformanceComputing/Final Project/Audio/Input_Samples/StarWars4.wav","rb");
-
-    if (wavFile == NULL)
-    {
-        cout << "Could not open file" << endl;
-        return -1;
-    }
-
-    fread(&wavHeader,headerSize,1,wavFile);
-    filelength = getFileSize(wavFile);
-
-    int inputLength = wavHeader.Subchunk2Size / 2;
-
-    fseek(wavFile, headerSize, SEEK_SET);
-
-    int16_t* data = new int16_t[inputLength]; // Assuming 16-bit samples
-    fread(data, wavHeader.Subchunk2Size, 1,wavFile);
-
-    fclose(wavFile);
-
     // display file information
     cout << "File is: " << filelength << " bytes." << endl;
     cout << "RIFF header                :" << wavHeader.RIFF[0] << wavHeader.RIFF[1] << wavHeader.RIFF[2] <<
@@ -114,58 +69,253 @@ int main()
     cout << "Block align                :" << wavHeader.blockAlign << endl;
     cout << "Data string                :" << wavHeader.Subchunk2ID[0] << wavHeader.Subchunk2ID[1] <<
         wavHeader.Subchunk2ID[2] << wavHeader.Subchunk2ID[3] << endl << endl;
+}
 
-    inputLength /= 2;
-
-    int16_t *inputL = new int16_t[inputLength];
-    int16_t *inputR = new int16_t[inputLength];;
-    int16_t *outputL = new int16_t[inputLength];
-    int16_t *outputR = new int16_t[inputLength];
-
-    for (int i = 0; i < inputLength; i++)
+// function to perform FIR filtration
+void FIR_lowpass(const int16_t input[], int16_t output[], int signalLength,const double coefficients[], int order)
+{
+    for (int i = signalLength-1; i >= 0; i--)
     {
-        inputL[i] = data[2*i];
-        inputR[i] = data[2*i + 1];
+        double temp = 0.0;
+        for (int j = 0; j < min(order,i+1); j++)
+        {
+            temp += coefficients[j] * input[i-j];
+        }
+        output[i] = (int16_t)(temp);
     }
+}
 
+int main()
+{
+    // initialize the high resolution clock
+    typedef chrono::high_resolution_clock clock;;
+
+    // starts the program clock
+    auto program_start_time = clock::now();
+
+    // defines the FIR filter order
+    const int ORDER = 201;
+
+    // creates a double array to store filter coefficients
     double coefficients[ORDER];
 
-    FIR_lowpass(inputL, outputL, inputLength, coefficients, ORDER);
-    FIR_lowpass(inputR, outputR, inputLength, coefficients, ORDER);
+    // opens the coefficients text file
+    ifstream coFile("Filters/coefficients.txt");
 
-    for (int i = 0; i < inputLength; i++)
-    {
-        data[2*i] = outputL[i];
-        data[2*i+1] = outputR[i];
-    }
-
-    wavFile = fopen("C:/Users/justb/EECE5640_HighPerformanceComputing/Final Project/Audio/Output_Samples/StarWars4_out.wav", "wb");
-
-    if (wavFile == NULL)
+    // throws an error if the coefficients text file cannot be opened
+    if (!coFile)
     {
         cout << "Could not open file" << endl;
         return -1;
     }
 
-    fwrite(&wavHeader,headerSize,1,wavFile);
+    // reads double precision floating-point numbers line by line
+    for (int i = 0; i < ORDER; ++i)
+    {
+        if (!(coFile >> coefficients[i]))
+        {  // Handle reading failure
+            cout << "Error reading coefficient at index " << i << endl;
+            return -1;
+        }
+    }
 
-    fseek(wavFile, headerSize, SEEK_SET);
+    // closes the coefficients text file
+    coFile.close();
 
-    fwrite(data, wavHeader.Subchunk2Size, 1,wavFile);
+    // defines the number of files to process
+    const int NUM_FILES = 7;
 
-    fclose(wavFile);
+    // creates a string array to store the input filenames
+    string filenames[7] = {"StarWars4", "StarWars6", "StarWars10", "StarWars12",
+        "StarWars13", "StarWars20", "StarWars29"};
 
-    // free allocated memory
-    delete[] inputL;
-    delete[] inputR;
-    delete[] outputL;
-    delete[] outputR;
-    delete[] data;
-    inputL = nullptr;
-    inputR = nullptr;
-    outputL = nullptr;
-    outputR = nullptr;
-    data = nullptr;
+    // creates string variables for the input and output file paths
+    string inputPath;
+    string outputPath;
+
+    // creates a wav header
+    wav_hdr wavHeader;
+
+    // creates a file to read and write into
+    FILE *wavFile;
+
+    // creates variables to hold the header size and file length
+    int headerSize = sizeof(wav_hdr);
+    int filelength;
+
+    // performs the audio processing workload on all input files
+    for (int fileIndex = 0; fileIndex < NUM_FILES; fileIndex++)
+    {
+        cout << "Filtering file: " << filenames[fileIndex] << endl;
+
+        // starts a read clock
+        auto start_time = clock::now();
+
+        // saves the input and output file paths
+        inputPath = "Input_Samples/";
+        outputPath = "Output_Samples/";
+
+        inputPath += filenames[fileIndex] + ".wav";
+        outputPath += filenames[fileIndex] + "_out.wav";
+
+        // creates points to store the input and output file path arguments
+        const char* inputArg = inputPath.c_str();
+        const char* outputArg = outputPath.c_str();
+
+        // opens the input WAV file
+        wavFile = fopen(inputArg,"rb");
+
+        // throws an error if the WAV file cannot be opened
+        if (wavFile == NULL)
+        {
+            cout << "Could not open file" << endl;
+            return -1;
+        }
+
+        // reads the WAV header and saves the file length
+        fread(&wavHeader,headerSize,1,wavFile);
+        filelength = getFileSize(wavFile);
+
+        // throws an error if the WAV file is not stored in stereo format
+        if (wavHeader.NumOfChan != 2)
+        {
+            fclose(wavFile);
+            cout << "File is not in stereo format" << endl;
+            return -1;
+        }
+
+        // creates a point for input/output data
+        int16_t* data;
+
+        // creates array pointers for the input and output stereo data
+        int16_t *inputL;
+        int16_t *inputR;
+        int16_t *outputL;
+        int16_t *outputR;
+
+        // moves the file fread offset to bypass the header information
+        fseek(wavFile, headerSize, SEEK_SET);
+
+        // creates and fills the input data array
+        int inputLength = wavHeader.Subchunk2Size / 2;
+        data = new int16_t[inputLength]; // Assuming 16-bit samples
+        fread(data, wavHeader.Subchunk2Size, 1,wavFile);
+
+        // closes the input WAV file
+        fclose(wavFile);
+
+        // halves the input length due to stereo format
+        inputLength /= 2;
+
+        // allocates memory for the input and output stereo array
+        inputL = new int16_t[inputLength];
+        inputR = new int16_t[inputLength];;
+        outputL = new int16_t[inputLength];
+        outputR = new int16_t[inputLength];
+
+        // fills the input stereo data
+        for (int i = 0; i < inputLength; i++)
+        {
+            inputL[i] = data[2*i];
+            inputR[i] = data[2*i + 1];
+        }
+
+        // stops a read clock
+        auto end_time = clock::now();
+
+        // casts read_run_time in nanoseconds
+        auto read_run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+
+        cout << "Time to read in nanoseconds: " << read_run_time << endl;
+
+        // starts a FIR clock
+        start_time = clock::now();
+
+        // performs FIR filtration on the input stereo data and stores in output stereo arrays
+        FIR_lowpass(inputL, outputL, inputLength, coefficients, ORDER);
+        FIR_lowpass(inputR, outputR, inputLength, coefficients, ORDER);
+
+        // stops a FIR clock
+        end_time = clock::now();
+
+        // casts FIR_run_time in nanoseconds
+        auto FIR_run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+
+        cout << "Time to filter in nanoseconds: " << FIR_run_time << endl;
+
+        // starts a write clock
+        start_time = clock::now();
+
+        // fills the output data array
+        for (int i = 0; i < inputLength; i++)
+        {
+            data[2*i] = outputL[i];
+            data[2*i+1] = outputR[i];
+        }
+
+        // opens the output WAV file
+        wavFile = fopen(outputArg, "wb");
+
+        // throws an error if the WAV file cannot be opened
+        if (wavFile == NULL)
+        {
+            cout << "Could not open file" << endl;
+
+            // free allocated memory
+            delete[] inputL;
+            delete[] inputR;
+            delete[] outputL;
+            delete[] outputR;
+            delete[] data;
+            inputL = nullptr;
+            inputR = nullptr;
+            outputL = nullptr;
+            outputR = nullptr;
+            data = nullptr;
+
+            return -1;
+        }
+
+        // writes the WAV header into the output WAV file
+        fwrite(&wavHeader,headerSize,1,wavFile);
+
+        // moves the file fread offset to bypass the header information
+        fseek(wavFile, headerSize, SEEK_SET);
+
+        // writes the output array into the WAV file data
+        fwrite(data, wavHeader.Subchunk2Size, 1,wavFile);
+
+        // closes the output WAV file
+        fclose(wavFile);
+
+        // stops a write clock
+        end_time = clock::now();
+
+        // casts write_run_time in nanoseconds
+        auto write_run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+
+        cout << "Time to write in nanoseconds: " << write_run_time << endl << endl;
+
+        // free allocated memory
+        delete[] inputL;
+        delete[] inputR;
+        delete[] outputL;
+        delete[] outputR;
+        delete[] data;
+        inputL = nullptr;
+        inputR = nullptr;
+        outputL = nullptr;
+        outputR = nullptr;
+        data = nullptr;
+    }
+
+    // stops the program clock
+    auto program_end_time = clock::now();
+
+    // casts program_run_time in nanoseconds
+    auto program_run_time = chrono::duration_cast<chrono::nanoseconds>(program_end_time - program_start_time).count();
+
+    cout << "Total program runtime in nanoseconds: " << program_run_time << endl;
 
     return 0;
 }
