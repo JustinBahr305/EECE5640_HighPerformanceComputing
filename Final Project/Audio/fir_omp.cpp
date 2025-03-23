@@ -1,12 +1,13 @@
 // fir
 // Created by Justin Bahr on 3/14/2025.
 // EECE 5640 - High Performance Computing
-// High Order Low Pass FIR Filter - Serial
+// High Order Low Pass FIR Filter - OpenMP
 
 #include <iostream>
 #include <chrono>
 #include <fstream>
 #include <string>
+#include <omp.h>
 
 using namespace std;
 
@@ -72,6 +73,7 @@ void printWAVHeader(WAV_HEADER &wavHeader, int filelength)
 void FIR_lowpass(const int16_t inputL[], int16_t outputL[], const int16_t inputR[], int16_t outputR[],
     int signalLength,const double coefficients[], int order)
 {
+    #pragma omp parallel for nowait
     for (int i = signalLength-1; i >= 0; i--)
     {
         double temp = 0.0;
@@ -82,6 +84,7 @@ void FIR_lowpass(const int16_t inputL[], int16_t outputL[], const int16_t inputR
         outputL[i] = (int16_t)(temp);
     }
 
+    #pragma omp parallel for nowait
     for (int i = signalLength-1; i >= 0; i--)
     {
         double temp = 0.0;
@@ -222,6 +225,7 @@ int main()
         outputR = new int16_t[inputLength];
 
         // fills the input stereo data
+        #pragma omp parallel for nowait
         for (int i = 0; i < inputLength; i++)
         {
             inputL[i] = data[2*i];
@@ -254,6 +258,7 @@ int main()
         start_time = clock::now();
 
         // fills the output data array
+        #pragma omp parallel for nowait
         for (int i = 0; i < inputLength; i++)
         {
             data[2*i] = outputL[i];
