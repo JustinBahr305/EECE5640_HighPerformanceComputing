@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name=HW5_Q1_gpu_JustinBahr
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --mem=100G
+#SBATCH --partition=courses-gpu
+#SBATCH --gres=gpu:p100:1
+#SBATCH --gres=gpu:1
+#SBATCH --output=Q1_gpu_output.txt
+
+# Program/command
+module load cuda/12.3.0
+make TARGET=Q1_gpu
+./Q1_gpu
+make clean

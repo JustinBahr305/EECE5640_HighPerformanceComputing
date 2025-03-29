@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH --job-name=HW5_Q1_omp_JustinBahr
+#SBATCH -N 1
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --partition=courses
+#SBATCH --output=Q1_omp_output.txt
+
+# Program/command
+make TARGET=Q1_omp
+./Q1_omp
+make clean
