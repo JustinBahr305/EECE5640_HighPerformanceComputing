@@ -6,7 +6,6 @@
 #SBATCH --mem=100G
 #SBATCH --partition=courses-gpu
 #SBATCH --gres=gpu:p100:1
-#SBATCH --gres=gpu:1
 #SBATCH --output=Q2_output.txt
 
 # Program/command
