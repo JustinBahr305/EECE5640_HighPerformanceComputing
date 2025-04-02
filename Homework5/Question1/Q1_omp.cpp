@@ -31,15 +31,10 @@ void parallelHistogram(const int data[], int globalHistogram[], int size)
         localHistograms[omp_get_thread_num()][(data[i] - 1) * NUM_BINS / MAX]++;
     } // end parallel section
 
-    // combines the local histograms in parallel
-    #pragma omp parallel for
+    // combines the local histograms
     for (int i = 0; i < NUM_BINS; i++)
-    {
         for (int j = 0; j < NUM_THREADS; j++)
-        {
             globalHistogram[i] += localHistograms[j][i];
-        }
-    } // end parallel section
 }
 
 int main()
@@ -68,7 +63,7 @@ int main()
         // initializes full data array
         data = new int[size];
 
-        // initializes an empty bins for the global and local histograms
+        // initializes empty bins for the global histogram
         int globalHistogram[NUM_BINS] = {0};
 
         // fills data array with random numbers 1-100,000
@@ -88,9 +83,30 @@ int main()
         // casts run_time in nanoseconds
         auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
+        // creates an array to store the first element encountered in each bin
+        int first[NUM_BINS] = {0};
+
+        // claculates the width of each class
+        int classWidth = MAX / NUM_BINS;
+
+        // finds the first elements in each class
         for (int i = 0; i < NUM_BINS; i++)
         {
-            cout << "Bin " << i+1 << ": " << globalHistogram[i]<< endl;
+            for (int j = 0; j < size; j++)
+            {
+                int min = i*classWidth;
+                int max = min + classWidth;
+                if (data[j] > min && data[j] <= max)
+                {
+                    first[i] = data[j];
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < NUM_BINS; i++)
+        {
+            cout << "Bin " << i+1 << " has " << globalHistogram[i] << " elements, one is " << first[i] << endl;
         }
 
         // prints the runtime

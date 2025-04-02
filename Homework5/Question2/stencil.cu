@@ -5,9 +5,7 @@
 
 #include <cuda_runtime.h>
 
-using namespace std;
-
-// defines the block/tile size
+// defines the block size
 const int B = 8;
 
 __global__ void stencilKernel(float *d_a, float *d_b, int n)
@@ -34,7 +32,7 @@ __global__ void stencilKernel(float *d_a, float *d_b, int n)
 void stencil(float *h_a, float *h_b, int n)
 {
 	// size, in bytes, of the tensor
-	size_t bytes = n*n*n*sizeof(float);
+	int bytes = n*n*n*sizeof(float);
 
     // creates pointers for device tensors
     float *d_a, *d_b;
