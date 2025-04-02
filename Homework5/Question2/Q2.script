@@ -11,5 +11,8 @@
 # Program/command
 module load cuda/12.3.0
 make
+echo Non-Tiled:
 ./Q2
+echo Tiled:
+./Q2_tiled
 make clean

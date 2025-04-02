@@ -25,7 +25,7 @@ void stencil(float *h_a, float *h_b, int n);
 int main()
 {
 	// number of floats per tensor
-	int num_floats = N*N*N;
+	size_t num_floats = N*N*N;
 
     // allocates the input and output tensors
 	float *h_a = new float[num_floats];
@@ -40,6 +40,7 @@ int main()
     // starts the clock
     auto start_time = clock::now();
 
+    // performs stenciling on a GPU
 	stencil(h_a, h_b, N);
 
     // stops the clock
@@ -48,9 +49,18 @@ int main()
     // casts run_time in nanoseconds
     auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
+    // prints the runtime
     cout << "Runtime in nanoseconds: " << run_time << endl;
 
-    cout << "a[3][3][3] = " << h_a[3*N*N + 3*N + 3] << endl;
+    // prints an example result
+    cout << "Computed a[3][3][3] = " << h_a[3*N*N + 3*N + 3] << endl;
+
+    // stores the confirmed result
+    float check = 0.75 * (h_b[2*N*N+3*N+3] + h_b[4*N*N+3*N+3] + h_b[3*N*N+2*N+3]
+                          + h_b[3*N*N+4*N+3] + h_b[3*N*N+3*N+2] + h_b[3*N*N+3*N+4]);
+
+    // prints the confirmed result
+    cout << "Confirmed a[3][3][3] = " << check << endl << endl;
 
     // frees allocated memory
     delete[] h_a;
