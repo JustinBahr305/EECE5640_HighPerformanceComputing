@@ -15,4 +15,6 @@ echo Non-Tiled:
 ./Q2
 echo Tiled:
 ./Q2_tiled
+echo Optimized:
+./Q2_opt
 make clean

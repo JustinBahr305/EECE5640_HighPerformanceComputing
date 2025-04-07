@@ -6,36 +6,53 @@
 #include <cuda_runtime.h>
 
 // defines the block size
-const int B = 256;
+const int B = 512;
 
 // defines the maximum value and number of bins
 const int NUM_BINS = 32;
 const int MAX = 100000;
 
+// defines the warp size and number of warps
+const int WARP_SIZE = 32;
+const int NUM_WARPS = B / WARP_SIZE;
+
 __global__ void histKernel(int *d_data, int *d_hist, int size)
 {
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    // defines the thread ID and stride size
+    int tid = threadIdx.x;
+    int idx = blockIdx.x * blockDim.x + tid;
+    int stride = blockDim.x * gridDim.x;
 
-    // creates a shared memory histogram
-    __shared__ int sharedHist[NUM_BINS];
+    // calculates IDs for each warp and each lane within each warp
+    int warpId = tid / WARP_SIZE;
+    int laneId = tid % WARP_SIZE;
 
-    // initialize sets shared histogram bins to zero
-    if (threadIdx.x < NUM_BINS)
-        sharedHist[threadIdx.x] = 0;
-    __syncthreads(); // synchronizes threads
+    // each warp gets a histogram, so 2D shared histogram
+    __shared__ int sharedHist[NUM_WARPS][NUM_BINS];
 
-    // processes data in each thread
-    if (idx < size)
+    // sets each warp's histogram to zero
+    for (int i = laneId; i < NUM_BINS; i += WARP_SIZE)
+        sharedHist[warpId][i] = 0;
+    __syncthreads();
+
+    // strided data processing per thread to streamline
+    for (int i = idx; i < size; i += stride)
     {
-        // calculates the proper bins and updates atomically
-        int bin = (d_data[idx] * NUM_BINS) / (MAX + 1);
-        atomicAdd(&sharedHist[bin], 1);
+        int bin = (d_data[i] * NUM_BINS) / (MAX + 1);
+        atomicAdd(&sharedHist[warpId][bin], 1);
     }
-    __syncthreads(); // synchronizes threads
+    __syncthreads();
 
-    // copies shared histogram to global memory
-    if (threadIdx.x < NUM_BINS)
-        atomicAdd(&d_hist[threadIdx.x], sharedHist[threadIdx.x]);
+    // private histograms are reduced and saved in the global histogram
+    for (int i = tid; i < NUM_BINS; i += blockDim.x)
+    {
+        int total = 0;
+        for (int w = 0; w < NUM_WARPS; ++w)
+        {
+            total += sharedHist[w][i];
+        }
+        atomicAdd(&d_hist[i], total);
+    }
 }
 
 void gpuHistogram(int *h_data, int *h_hist, int size)

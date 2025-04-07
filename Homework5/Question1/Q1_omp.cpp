@@ -40,7 +40,7 @@ void parallelHistogram(const int data[], int globalHistogram[], int size)
 int main()
 {
     // creates a variable for the number of terms
-    int size = 4096;
+    int size = 2048;
 
     // creates a variable for the number of threads
     int numThreads;

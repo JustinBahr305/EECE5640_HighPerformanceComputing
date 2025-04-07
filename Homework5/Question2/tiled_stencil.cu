@@ -13,30 +13,35 @@ __global__ void stencilKernel(float *d_a, float *d_b, int n)
     // creates a block/tile in shared memory
 	__shared__ float tile[B + 2][B + 2][B + 2];
 
+    // saves thread IDs
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+    int tz = threadIdx.z;
+
     // stores the global tensor indices based on block and thread IDs
-    int i = blockIdx.x * B + threadIdx.x;
-    int j = blockIdx.y * B + threadIdx.y;
-    int k = blockIdx.z * B + threadIdx.z;
+    int i = blockIdx.x * B + tx;
+    int j = blockIdx.y * B + ty;
+    int k = blockIdx.z * B + tz;
 
     // deals with outer ring around each tile (halo)
     if (i < n && j < n && k < n)
     {
-        tile[threadIdx.x + 1][threadIdx.y + 1][threadIdx.z + 1] = d_b[i * n * n + j * n + k];
+        tile[tx + 1][ty + 1][tz + 1] = d_b[i * n * n + j * n + k];
 
-        if (threadIdx.x == 0 && i > 0)
-            tile[0][threadIdx.y + 1][threadIdx.z + 1] = d_b[(i - 1) * n * n + j * n + k];
-        if (threadIdx.x == B - 1 && i < n - 1)
-            tile[B + 1][threadIdx.y + 1][threadIdx.z + 1] = d_b[(i + 1) * n * n + j * n + k];
+        if (tx == 0 && i > 0)
+            tile[0][ty + 1][tz + 1] = d_b[(i - 1) * n * n + j * n + k];
+        if (tx == B - 1 && i < n - 1)
+            tile[B + 1][ty + 1][tz + 1] = d_b[(i + 1) * n * n + j * n + k];
 
-        if (threadIdx.y == 0 && j > 0)
-            tile[threadIdx.x + 1][0][threadIdx.z + 1] = d_b[i * n * n + (j - 1) * n + k];
-        if (threadIdx.y == B - 1 && j < n - 1)
-            tile[threadIdx.x + 1][B + 1][threadIdx.z + 1] = d_b[i * n * n + (j + 1) * n + k];
+        if (ty == 0 && j > 0)
+            tile[tx + 1][0][tz + 1] = d_b[i * n * n + (j - 1) * n + k];
+        if (ty == B - 1 && j < n - 1)
+            tile[tx + 1][B + 1][tz + 1] = d_b[i * n * n + (j + 1) * n + k];
 
-        if (threadIdx.z == 0 && k > 0)
-            tile[threadIdx.x + 1][threadIdx.y + 1][0] = d_b[i * n * n + j * n + (k - 1)];
-        if (threadIdx.z == B - 1 && k < n - 1)
-            tile[threadIdx.x + 1][threadIdx.y + 1][B + 1] = d_b[i * n * n + j * n + (k + 1)];
+        if (tz == 0 && k > 0)
+            tile[tx + 1][ty + 1][0] = d_b[i * n * n + j * n + (k - 1)];
+        if (tz == B - 1 && k < n - 1)
+            tile[tx + 1][ty + 1][B + 1] = d_b[i * n * n + j * n + (k + 1)];
 
         // synchronizes threads
         __syncthreads();
@@ -44,8 +49,8 @@ __global__ void stencilKernel(float *d_a, float *d_b, int n)
         // combines the tiled results
         if (i > 0 && i < n - 1 && j > 0 && j < n - 1 && k > 0 && k < n - 1)
         {
-            d_a[i * n * n + j * n + k] = 0.75f * (
-                tile[threadIdx.x][threadIdx.y + 1][threadIdx.z + 1] +
+            d_a[i * n * n + j * n + k] = 0.75 * (
+                tile[tx][ty + 1][tz + 1] +
                 tile[threadIdx.x + 2][threadIdx.y + 1][threadIdx.z + 1] +
                 tile[threadIdx.x + 1][threadIdx.y][threadIdx.z + 1] +
                 tile[threadIdx.x + 1][threadIdx.y + 2][threadIdx.z + 1] +

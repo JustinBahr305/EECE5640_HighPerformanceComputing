@@ -8,9 +8,6 @@
 
 using namespace std;
 
-// defines the tensor dimension
-const int N = 32;
-
 // function to fill a tensor
 void fill(float *b, int n)
 {
@@ -24,33 +21,44 @@ void stencil(float *h_a, float *h_b, int n);
 
 int main()
 {
-	// number of floats per tensor
-	size_t num_floats = N*N*N;
+	// iteraties with N = 8,16,32,64
+	int N = 8;
+	size_t num_floats;
 
-    // allocates the input and output tensors
-	float *h_a = new float[num_floats];
-	float *h_b = new float[num_floats];
+    // creates pointers for the input and output tensors
+	float *h_a;
+	float *h_b;
 
-    // fills the input tensor
-	fill(h_b, N);
+	// initialize the high resolution clock
+	typedef chrono::high_resolution_clock clock;
 
-    // initialize the high resolution clock
-    typedef chrono::high_resolution_clock clock;
+	for (; N <= 64; N*=2)
+    {
+		// number of floats per tensor
+		num_floats = N*N*N;
 
-    // starts the clock
-    auto start_time = clock::now();
+	    // allocates the input and output tensors
+		h_a = new float[num_floats];
+		h_b = new float[num_floats];
 
-    // performs stenciling on a GPU
-	stencil(h_a, h_b, N);
+	    // fills the input tensor
+		fill(h_b, N);
 
-    // stops the clock
-    auto end_time = clock::now();
+	    // starts the clock
+	    auto start_time = clock::now();
 
-    // casts run_time in nanoseconds
-    auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+	    // performs stenciling on a GPU
+		stencil(h_a, h_b, N);
 
-    // prints the runtime
-    cout << "Runtime in nanoseconds: " << run_time << endl;
+	    // stops the clock
+	    auto end_time = clock::now();
+
+	    // casts run_time in nanoseconds
+	    auto run_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+
+	    // prints the runtime
+	    cout << "Runtime in nanoseconds for " << N << "^3 dimension: " << run_time << endl;
+    }
 
     // prints an example result
     cout << "Computed a[3][3][3] = " << h_a[3*N*N + 3*N + 3] << endl;
